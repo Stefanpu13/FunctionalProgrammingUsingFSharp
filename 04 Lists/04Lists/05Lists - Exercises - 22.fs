@@ -51,9 +51,6 @@ module E =
         
         add [] (p1, p2)
 
-    (Polynomial [1; 0; 0]) &+ (Polynomial [2; 0; 1; 0; 3])
-
-
     let multiply p1 p2 = 
         let rec multiply p1 = function
             | Polynomial [] -> Polynomial []
@@ -61,36 +58,34 @@ module E =
             | Polynomial (coef::coefs) -> 
                 (coef &* p1) &+ (byX (multiply (Polynomial coefs) p1))
         multiply p1 p2
-        
-
-    multiply (Polynomial [4;1]) (Polynomial [2; 3; 1])
-
+    
     (* 4.22.4
         4. Declare an F# function to give a textual representation for a polynomial.
     *)
 
     let toString (Polynomial p) =    
-        p
-            |> indexed     
-            |> map (
-                    fun (index, polCoef) ->
-                        match polCoef with
-                        | neg when neg < 0 -> (index, abs neg, "-") 
-                        | nonNeg -> (index, nonNeg, "+")                
+        let attachPowerToCoefs = indexed
+        let attachSignToCoefs = 
+            map (fun (index, polCoef) -> 
+                match polCoef with
+                    | neg when neg < 0 -> (index, abs neg, "-") 
+                    | zero when zero = 0 ->(index, zero, "")
+                    | pos -> (index, pos, "+")
             )
+        let removeZeroCoefs = filter (fun (_, polCoef, _) -> polCoef <> 0) 
+
+        p
+            |> attachPowerToCoefs    
+            |> attachSignToCoefs
+            |> removeZeroCoefs
+            |> indexed
             |> fold (
-                    fun polStr (index, polCoef, sign) ->
-                        match (index, polCoef, sign) with
-                        | (_, 0, _) -> polStr
-                        | (0, _, _) -> polCoef.ToString() 
-                        | (i, polCoef, sign) ->
-                            let power = if i = 1 then "" else "^" + i.ToString()
-                            let coef = if polCoef = 1 then "" else polCoef.ToString() 
-                            polStr + " " + sign + " " + coef + "x" + power 
+                    fun polStr (position, (pow, polCoef, sign)) ->
+                        match pow with
+                        | 0 -> polCoef.ToString()
+                        | _ ->
+                            let power = if pow = 1 then "" else "^" + pow.ToString()
+                            let coef = if polCoef = 1 then "" else polCoef.ToString()                            
+                            let strBeforeTerm = if position = 0 then "" else " " + sign + " "
+                            polStr + strBeforeTerm + coef + "x" + power 
             ) ""
-
-    toString (Polynomial [1; 1; 2])
-    toString (Polynomial [5 ; -1])
-
-    toString (multiply (Polynomial [1; 5 ;-1; -1]) (Polynomial [1 ;-1; 2]))
-
