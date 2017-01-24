@@ -3,6 +3,7 @@ namespace ClientHelpers
 
 open Microsoft.FSharp.Reflection
 open Types.T
+open Exercises11To18
 
 module H = 
     let private numberOfInterestsCount = System.Random()
@@ -35,7 +36,7 @@ module H =
         let clientWithSomeInterests = getClientWithSomeInterests client
         {clientWithSomeInterests with ThemesOfInterest = Some { clientWithSomeInterests.ThemesOfInterest.Value with Reading = interests;}}
 
-    let private toUniqueSortedList l = (List.ofSeq >> Helpers.L.unique >> Helpers.L.sort) l
+    let private toUniqueSortedList l = (List.ofSeq >> Helpers.L.unique >> E.sort) l
 
     let generateRandomInterests client = 
         let addSportInterests  = randomInterests<Sport> >> toUniqueSortedList >> clientWithGeneratedSportsInterests
@@ -46,6 +47,4 @@ module H =
             |> addSportInterests sportCases                        
             |> addMusicInterests musicCases
             |> addReadingInterests readingCases
-
-    // let generateRandomInterestsForClients clients  =  Helpers.L.map generateRandomInterests clients 
-
+    

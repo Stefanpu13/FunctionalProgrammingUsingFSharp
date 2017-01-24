@@ -140,7 +140,7 @@ module E =
         1. Declare an F# function finding the smallest element in a non-empty integer list.
     *)
 
-    let min l : int option = 
+    let min l = 
         let rec min = function
             | (None, []) -> None       
             | (Some x, []) -> Some x     
@@ -154,7 +154,7 @@ module E =
         delete(a, xs) is the list obtained by deleting one occurrence of a in xs (if there is one).
     *)
 
-    let delete (a, l) : int list = 
+    let delete (a, l) = 
         let rec delete acc = function
             | [] -> rev acc
             | x::xs ->

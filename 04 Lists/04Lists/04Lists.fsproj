@@ -56,6 +56,11 @@
     <Compile Include="04Lists - Exercises - 19-21 - Tests.fs" />
     <Compile Include="05Lists - Exercises - 22.fs" />
     <Compile Include="05Lists - Exercises - 22 - Tests.fs" />
+    <Compile Include="061Types - Exercises - 23.fs" />
+    <Compile Include="062ClientHelpers - Exercises - 23.fs" />
+    <Compile Include="063ClientsRepo - Exercises - 23.fs" />
+    <Compile Include="064DatingBureauAPI - Exercises - 23.fs" />
+    <Compile Include="065Lists - Exercises - 23 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

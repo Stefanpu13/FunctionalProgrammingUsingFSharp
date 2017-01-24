@@ -3,9 +3,8 @@ open Helpers.L
 open Types.T
 open ClientHelpers.H
 
-
 module File =
-    let rand = System.Random()
+    let private rand = System.Random()
     let private womenNames = [
         "MARY"; "PATRICIA"; "LINDA"; "BARBARA"; "ELIZABETH"; 
         "JENNIFER"; "MARIA"; "SUSAN"; "MARGARET"; "DOROTHY"; "LISA"; 
@@ -21,43 +20,6 @@ module File =
         "KENNETH"; "STEVEN"; "EDWARD"; "BRIAN"; "RONALD"; "ANTHONY";
         "KEVIN"; "JASON"; "MATTHEW"; "GARY"; "TIMOTHY"; "JOSE"; "LARRY"; "JEFFREY";
         ] 
-
-    let getSex ()= 
-        match rand.Next(2) with
-        | 0 -> Male
-        | 1 -> Female
-        | _ -> Other
-
-    let getName names = 
-        match at (rand.Next(length names)) names with 
-        | None -> failwith "Error in 'getName' helper method"
-        | Some name -> name 
-
-    let getPhoneNumber ()= 
-      seq { 
-          for n in 0..7 do             
-              yield rand.Next(10).ToString()
-      } |> List.ofSeq |> fold (+) ""
-
-    let getYearOfBirth () = rand.Next(1975, 1997)
-    let createRandomPerson () = 
-        let sex = getSex()
-        let name = 
-            match sex with
-            |Female -> getName womenNames
-            |_ -> getName menNames
-        let phoneNumber = getPhoneNumber()
-        let yearOfBirth = getYearOfBirth()
-
-        {
-            Id = rand.Next(10000000)
-            Name=name;
-            Sex = sex;
-            TelephoneNum =Some phoneNumber;
-            ThemesOfInterest = None;
-            YearOfBirth = yearOfBirth;
-        } 
-        |> generateRandomInterests
 
     let mutable private firstTimeCall = true
     let mutable private clients = [];
@@ -94,6 +56,43 @@ module File =
 
     let private updateClients ()= map update
     let resetState () = firstTimeCall <- true
+    
+    let getSex ()= 
+        match rand.Next(2) with
+        | 0 -> Male
+        | 1 -> Female
+        | _ -> Other
+
+    let getName names = 
+        match at (rand.Next(length names)) names with 
+        | None -> failwith "Error in 'getName' helper method"
+        | Some name -> name 
+
+    let getPhoneNumber ()= 
+      seq { 
+          for n in 0..7 do             
+              yield rand.Next(10).ToString()
+      } |> List.ofSeq |> fold (+) ""
+
+    let getYearOfBirth () = rand.Next(1975, 1997)
+    let createRandomPerson () = 
+        let sex = getSex()
+        let name = 
+            match sex with
+            |Female -> getName womenNames
+            |_ -> getName menNames
+        let phoneNumber = getPhoneNumber()
+        let yearOfBirth = getYearOfBirth()
+
+        {
+            Id = rand.Next(10000000)
+            Name=name;
+            Sex = sex;
+            TelephoneNum =Some phoneNumber;
+            ThemesOfInterest = None;
+            YearOfBirth = yearOfBirth;
+        } 
+        |> generateRandomInterests
 
     let all () = 
         match firstTimeCall with
