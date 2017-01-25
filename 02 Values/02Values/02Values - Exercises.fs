@@ -36,8 +36,6 @@ module E =
         then false
         else s.[i] = c
 
-    isIthChar("abcde", 6 , 'b')
-
     (* 2.4
         Declare the F# function occFromIth: string * int * char -> int where
         occFromIth(str, i, ch) = the number of occurrences of character ch
@@ -62,28 +60,24 @@ module E =
             |> Seq.filter ((=) c)
             |> Seq.length
 
-
-    occFromIth ("afsfdasdgffsgassdkjada", 0, 'f')
-    occFromIth2 ("afsfdasdgffsgassdkjada", 0, 'f')
-
     (* 2.5
         Declare the F# function occInString: string * char -> int where
         occInString(str, ch) = the number of occurrences of character ch
         in the string str.
     *)
 
-    let occInString ((s:string), c) = occFromIth (s, 0, c)
-
-    occInString ("afsfdasdgffsgassdkjada", 'a')
+    let occInString ((s:string), c) = occFromIth (s, 0, c)   
 
     (* 2.6
         Declare the F# function notDivisible: int * int -> bool where
         notDivisible(d, n) is true if and only if d is not a divisor of n.
         For example notDivisible(2,5) is true, and notDivisible(3,9) is false.
     *)
-    let notDivisible (d, n) = n % d <> 0
-    notDivisible(3, 9)
-
+    let notDivisible (d, n) =
+        if d = 0 
+        then true
+        else n % d <> 0
+        
     (* 2.7
         1. Declare the F# function test: int * int * int -> bool. The value of test(a, b, c),
         for a ≤ b, is the truth value of:
