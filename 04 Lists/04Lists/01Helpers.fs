@@ -101,11 +101,3 @@ module L =
                 else unique (x::res) xs
 
         unique [] l
-
-    // Naive quicksort
-    let rec sort = function         
-        | [] -> []
-        | x::xs ->
-            // ((>) x) - partially apply "ge" function. Returns function of type ('a -> bool)
-            let sm, lg = xs |> partition ((>) x)
-            (sort sm) @ (x:: (sort lg))
