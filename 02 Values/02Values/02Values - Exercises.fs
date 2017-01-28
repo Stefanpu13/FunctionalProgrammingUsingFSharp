@@ -20,7 +20,6 @@ module E =
 
     let pow (s, n) =
         let rec p acc = function
-            // | 0 -> acc
             | negOrZero when negOrZero <= 0 -> acc
             | n -> p (acc + s) (n - 1)
         p "" n
@@ -93,12 +92,10 @@ module E =
     *)
 
     // 1.
-    let test (a, b, c) =    
+    let noDivisorsInInterval (a, b, c) =    
         if a <= b
         then [a..b] |> List.fold (fun isNotDivisible x -> isNotDivisible && notDivisible (x, c) ) true
         else false
-
-    test (3, 5, 69)
 
     // 2.
     let prime = function    
@@ -106,9 +103,7 @@ module E =
         |2|3 -> true    
         |n ->
             let sqrtOfN = (n |> float |> sqrt |> int)  
-            test (2, sqrtOfN, n)
-
-    [1..100] |> List.filter prime |> List.iter (printf "%i ") 
+            noDivisorsInInterval (2, sqrtOfN, n)    
 
     // 3. 
     let nextPrime n =
@@ -117,9 +112,7 @@ module E =
             |true -> num
             |false -> nextPrimeRec (num + 1)
         nextPrimeRec (n + 1)
-
-    nextPrime 2123123124
-
+        
     (* 2.8
         The following figure gives the first part of Pascal’s triangle:
             1
@@ -132,11 +125,11 @@ module E =
     *)
 
     // See https://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
-    let  getCoeficient (n, k) = 
-        {1..k} |> 
-        Seq.fold (fun res i -> res * (n + 1 - i) / i) 1
-
-    getCoeficient (5, 3)
+    let  bin (n, k) = 
+        match (n, k) with
+        | (_, 0) -> 1
+        | _ ->
+            {1..k} |> Seq.fold (fun res i -> res * (n + 1 - i) / i) 1 
 
     (* 2.9
         Consider the declaration:
@@ -159,8 +152,6 @@ module E =
     | (0,y) -> y
     | (x,y) -> f2(x-1, x*y)
 
-    f2(3, 5)
-
     (* 2.10
         Consider the following declaration:
         let test(c,e) = if c then e else 0;;
@@ -179,10 +170,10 @@ module E =
     | n -> n * fact(n-1)
     let test2(c,e) = if c then e else 0
 
-    if false then fact -1 else 0
+    //if false then fact -1 else 0
 
     // stack overflow
-    test2(false, fact(-1))
+    //test2(false, fact(-1))
 
     (* 2.11
 
@@ -192,30 +183,25 @@ module E =
         unVAT n (VAT n x) = x
     *)
 
-    let VAT n x = x + (x *  (float n/100.0))
+    let VAT n x = x + (x *  (float n / 100.0))
 
-    VAT 12 52.0
-
-    let unVAT n x = x / (1.0 + float n/100.0)
-
-    unVAT 15 (VAT 15 52.0)
-    unVAT 13 (VAT 13 68.0)
-
+    let unVAT n x = x / (1.0 + float n / 100.0)
+    
+    // Note: Will use Option to represent absence of solution
     (* 2.12
         Declare a function min of type (int -> int) -> int. The value of min(f) is the smallest
         natural number n where f(n) = 0 (if it exists).
     *)
-
     let min f = 
-        let rec findMin = function
-        | neg when neg < 0 -> neg
-        | res when f res = 0 -> res
+        let rec findMin = function        
+        | res when f res = 0 -> Some res
         | n -> findMin (n + 1)
+        | maxValue when System.Int32.MaxValue = maxValue -> None
         
         findMin 1
-
-    min (fun x -> 2 * x - x)
-
+    
+    // Any function that causes integer overflow before reaching a solution,
+    // can potentially give wrong answer. I do not how to solve that problem  
     let pow2 x n = 
         let rec powRec res = function 
         | 1 -> res
@@ -223,11 +209,7 @@ module E =
 
         powRec x n
 
-    pow2 2 31
-
-    // pow 2 32  breaks the function, because of integer overflow
-    min (pow2 2)    
-
+    
     (* 2.13
         The functions curry and uncurry of types
         curry : (’a * ’b -> ’c) -> ’a -> ’b -> ’c
@@ -244,19 +226,11 @@ module E =
             h
         g
     let add3 = curry (fun (a, b) -> a + b + 1) 2
-
-    add3 6
-
     let uncurry g = 
         let f (x, y) = 
-            // let h = g x
-            // h y
             g x y
         f
-
-    let add2 = uncurry (fun a b-> a + b + 2)
-
-    add2 (2, 3)
+    let add2 = uncurry (fun a b-> a + b + 2)   
 
     //Better sollution for problem 2.13
     let curry2 f = fun a -> fun b -> f (a,b)
