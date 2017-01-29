@@ -21,22 +21,11 @@ module E =
     // 3.3.1
     let (&+) (Complex(r1, i1)) (Complex(r2, i2)) = Complex (r1+r2, i1+i2)
     let (&*) (Complex(r1, i1)) (Complex(r2, i2)) = Complex (r1*r2 - i1*i2, i1*r2+r1*i2)
-    let (&-) (Complex(r1, i1)) (Complex(r2, i2)) = Complex (r1-r2, i1-i2)
-
-    //Operation 1/(a, b)
-    // let (!!!) (Complex(r, i)) = Complex (r / (r**2.0 + i**2.0), -i / (r**2.0 + i**2.0))
-    
-    // uaing binding expressions
+    let (&-) (Complex(r1, i1)) (Complex(r2, i2)) = Complex (r1-r2, i1-i2)    
+        
+    // //Operation 1/(a, b)
+    // using binding expressions
     let (!!!) (Complex(r, i)) = 
         let (rSquared, iSquared) = (r**2.0, i**2.0) in 
             Complex (r / (rSquared + iSquared), -i / (rSquared + iSquared))
     let (&/) c1 c2 = c1 &* (!!! c2)
-
-
-    // Test complex numbers operations
-
-    let c3 = Complex(2.5, 2.0) 
-    let c4 = Complex(2.0, 3.0) 
-
-    c3 &- c4
-    c3 &/ c4

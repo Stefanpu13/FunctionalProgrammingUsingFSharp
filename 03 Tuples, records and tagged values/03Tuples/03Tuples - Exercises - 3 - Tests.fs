@@ -62,7 +62,7 @@ type ``Substraction Tests``() =
 type ``Division Tests``() = 
 
     [<Test>]
-    member test.``When p1 = (1.0, 2.0), p2 = (2.0, 3.0), output should be (-1.0, -1.0)``() = 
+    member test.``When p1 = (1.0, 2.0), p2 = (2.0, 3.0), output should be (0.615, 0.077)``() = 
         let c3 = Complex(1.0, 2.0) 
         let c4 = Complex(2.0, 3.0) 
 

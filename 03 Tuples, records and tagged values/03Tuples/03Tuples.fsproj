@@ -52,8 +52,10 @@
     <Compile Include="03Tuples - Exercises - 2 - Tests.fs"/>
     <Compile Include="03Tuples - Exercises - 3.fs"/>
     <Compile Include="03Tuples - Exercises - 3 - Tests.fs"/>
-    <Compile Include="03Tuples - Exercises - 2-7.fs" />
-    <Compile Include="03Tuples - Exercises - 6.fs"/>
+    <Compile Include="03Tuples - Exercises - 4-5.fs" />
+    <Compile Include="03Tuples - Exercises - 4-5 - Tests.fs" />
+    <Compile Include="03Tuples - Exercises - 6.fs" />
+    <Compile Include="03Tuples - Exercises - 6 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
