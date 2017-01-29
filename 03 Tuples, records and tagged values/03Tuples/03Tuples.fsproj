@@ -48,7 +48,12 @@
   <ItemGroup>    
     <Compile Include="03Tuples - Exercises - 1.fs"/>
     <Compile Include="03Tuples - Exercises - 1 - Tests.fs"/>
+    <Compile Include="03Tuples - Exercises - 2.fs"/>
+    <Compile Include="03Tuples - Exercises - 2 - Tests.fs"/>
+    <Compile Include="03Tuples - Exercises - 3.fs"/>
+    <Compile Include="03Tuples - Exercises - 3 - Tests.fs"/>
     <Compile Include="03Tuples - Exercises - 2-7.fs" />
+    <Compile Include="03Tuples - Exercises - 6.fs"/>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
