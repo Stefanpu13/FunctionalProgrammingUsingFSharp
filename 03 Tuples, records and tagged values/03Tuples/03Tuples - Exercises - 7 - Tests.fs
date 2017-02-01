@@ -66,5 +66,4 @@ type ``area tests``() =
     member test.``When shape is triangle and size is (4.0, 3.0, 3.0), output should be valid``() = 
         let triangle = Triangle (4.0, 3.0, 3.0)
         area triangle |> shouldEqual (Area (sqrt(5.0*(5.0-4.0)*(5.0-3.0)*(5.0-3.0))))
-
     
