@@ -57,14 +57,10 @@ module L =
             | x::xs -> map ((mapper x)::mappedElems) xs
         
         map [] l
-
-    let fold folder state l = 
-        let rec fold currentState = function
-            | [] -> currentState
-            | x::xs -> fold (folder currentState x) xs
-        
-        fold state l
-
+    let rec fold folder state  = function
+    | [] -> state
+    | x::xs -> fold folder (folder state x) xs
+    
     // Naive; non tail-recursive
     let foldBackNaive folder l state = 
         let rec foldBack currentState = function
