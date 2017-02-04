@@ -49,6 +49,8 @@
     <Compile Include="05Collections.fsx" />
     <Compile Include="05Collections - Exercises - 1-4.fs" />
     <Compile Include="05Collections - Exercises - 1-4 - Tests.fs" />
+    <Compile Include="05Collections - Exercises - 5.fs" />
+    <Compile Include="05Collections - Exercises - 5 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
