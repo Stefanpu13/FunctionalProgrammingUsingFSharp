@@ -42,7 +42,7 @@ type ``canBeExtBy tests``() =
 [<TestFixture>]
 type ``extColouring tests``() =
     [<Test>]
-    member t.``extColouring. cols are [["a"];["b"]], map is [("a", "b"); ("c",  "d");], coutry is "c", should return  [["a"; "c"];["b"]]`` () = 
+    member t.``extColouring. cols are [["a"];["b"]], map is [("a", "b"); ("c",  "d");], coutry is "c", should return  [["c";"a"];["b"]]`` () = 
         let exMap = [("a", "b"); ("c",  "d"); ("d","a")]
         let cols =  [["a"];["b"]]
         extColouring exMap cols "c" |> shouldEqual [["c";"a"];["b"]]
@@ -98,7 +98,6 @@ type ``countries tests``() =
         let exMap = [("a", "b"); ("c",  "d");]
         
         countries exMap |> shouldEqual ["a";"b";"c";"d"]
-
 
     [<Test>]
     member t.``countries2. map is [("a", "b"); ("c",  "d");], should return  ["a";"b";"c";"d"]`` () = 
