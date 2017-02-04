@@ -2,6 +2,7 @@
 #r "./packages/FAKE/tools/FakeLib.dll"
 
 open Fake
+open Fake.Testing 
 
 // Directories
 let buildDir  = "./build/"
@@ -27,16 +28,19 @@ Target "Build" (fun _ ->
     |> Log "AppBuild-Output: "
 )
 
-Target "Deploy" (fun _ ->
-    !! (buildDir + "/**/*.*")
-    -- "*.zip"
-    |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
+Target "Test" (fun _ ->
+    !! (buildDir + "/05Collections.dll")
+        |> NUnit3 (fun p ->
+            { p with
+                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe" })
 )
+
+
 
 // Build order
 "Clean"
   ==> "Build"
-  ==> "Deploy"
+  ==> "Test"
 
 // start build
-RunTargetOrDefault "Build"
+RunTargetOrDefault "Test"

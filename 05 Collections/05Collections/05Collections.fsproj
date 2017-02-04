@@ -43,9 +43,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="05Collections.fsx" />
+    <Compile Include="05Collections - Exercises - 1-4.fs" />
+    <Compile Include="05Collections - Exercises - 1-4 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
