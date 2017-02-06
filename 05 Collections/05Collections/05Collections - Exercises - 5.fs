@@ -39,7 +39,7 @@ module E =
             then (c::col)::cols'
             else col::extColouring m cols' c
 
-    // More complicated algorithm. Also not efficient due to list concant "@"
+    // More complicated algorithm. Also not efficient due to list concat "@"
     let extColouring2 m cols c =
         let (extendedCols, alreadyExtended) =
             List.fold (
@@ -83,6 +83,6 @@ module E =
         2. Revised functions more clearly show in which direction the lists are traversed (fold vs foldBack) 
         3. extColouring is more preferable than extColouring2 because:
             a) it is simpler
-            b) it is more efficient
+            b) it is more efficient (no list concat)
         In all other cases revised functions seem better, due to 2
     *)
