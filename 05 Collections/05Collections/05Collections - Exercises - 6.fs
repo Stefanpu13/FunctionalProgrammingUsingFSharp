@@ -15,3 +15,38 @@ module E =
     let domain relation setA setB = 
         setA |> 
             Set.filter (fun elA -> setB |> Set.exists (fun elB -> Set.contains (elA, elB) relation))
+
+    (* 5.6.2
+        The range rng r of a relation r is the set of elements b in B where there exists an element a
+        in A such that (a, b) ∈ r. Write an F# declaration expressing the range function.
+    *)
+
+    let range relation setA setB = 
+        setB |> 
+            Set.filter (fun elB -> setA |> Set.exists (fun elA -> Set.contains (elA, elB) relation))
+
+    (* 5.6.3
+        If r is a finite relation from A to B and a is an element of A, then the application of r to a,
+        apply r a, is the set of elements b in B such that (a, b) ∈ r. Write an F# declaration expressing
+        the apply function.
+    *)
+
+    let apply relation elA setA setB = setB |> Set.filter(fun elB -> Set.contains (elA, elB) relation)
+
+    (* 5.6.4
+        A relation r from a set A to the same set is said to be symmetric if (a1, a2) ∈ r implies
+        (a2, a1) ∈ r for any elements a1 and a2 in A. The symmetric closure of a relation r is the
+        smallest symmetric relation containing r. Declare an F# function to compute the symmetric
+        closure.
+    *)
+    let symmetricClosure relation setA = 
+        relation |> Set.fold(
+            fun symClosure (a1, a2) -> 
+                match (Set.contains a1 setA, Set.contains a2 setA, symClosure) with
+                | (true, true, Some symCl) -> 
+                    if relation |> Set.contains (a2, a1) 
+                    then Some symCl 
+                    else Some (Set.add (a2, a1) symCl)
+                | _ -> None
+            ) (Some relation)         
+        
