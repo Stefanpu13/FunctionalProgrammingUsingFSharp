@@ -110,3 +110,44 @@ type ``symmetric closure tests``() =
         let setA = set [1; 2; 3]
         let relation = set [(1, 2); (1,3); (2,1); (3,1)]
         symmetricClosure relation setA |> shouldEqual (Some (set [(1, 2); (1,3); (2,1); (3,1)]))
+
+// relation composition tests
+[<TestFixture>]
+type ``relation composition tests``() =
+
+    [<Test>]
+    member t.``If r = [(1,4); (2,5)], s = [(4, 7); (5,8)], then  r**s should be [(1, 7);(2, 8)]`` () = 
+        let r = Set [(1,4); (2,5)]
+        let s = Set [(4, 7); (5,8)]
+        relationalComposition r s |> shouldEqual (Set [(1, 7);(2, 8)])
+
+    [<Test>]
+    member t.``If r = [(1,4);(2,4); (2,5)], s = [(4, 7); (5,8)], then  r**s should be [(1, 7);(2,7);(2, 8)]`` () = 
+        let r = Set [(1,4);(2,4); (2,5)]
+        let s = Set [(4, 7); (5,8)]
+        relationalComposition r s |> shouldEqual (Set [(1, 7);(2,7);(2, 8)])
+
+    [<Test>]
+    member t.``If r = [(1,4);(1,5)], s = [(4,8);(5,8)], then r**s should be [(1,8)]`` () = 
+        let r = Set [(1,4);(1,5)]
+        let s = Set [(4,8); (5,8)]
+        relationalComposition r s |> shouldEqual (Set [(1,8)])
+
+    [<Test>]
+    member t.``If r = [], s = [(4,8);(5,8)], then r**s should be []`` () = 
+        let r = Set []
+        let s = Set [(4,8); (5,8)]
+        relationalComposition r s |> shouldEqual (Set [])
+
+    [<Test>]
+    member t.``If r = [(1,4);(1,5)], s = [], then r**s should be []`` () = 
+        let r = Set [(1,4);(1,5)]
+        let s = Set []
+        relationalComposition r s |> shouldEqual (Set [])
+
+    [<Test>]
+    member t.``If r = [(1,4);(1,5)], s = [(6,8)], then r**s should be []`` () = 
+        let r = Set [(1,4);(1,5)]
+        let s = Set [(6,8)]
+        relationalComposition r s |> shouldEqual (Set [])
+    

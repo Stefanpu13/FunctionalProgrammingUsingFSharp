@@ -48,5 +48,25 @@ module E =
                     then Some symCl 
                     else Some (Set.add (a2, a1) symCl)
                 | _ -> None
-            ) (Some relation)         
-        
+            ) (Some relation)     
+
+    (* 5.6.5
+        The relation composition r ◦◦ s of a relation r from a set A to a set B and a relation s from
+        B to a set C is a relation from A to C. It is defined as the set of pairs (a, c) where there exist
+        an element b in B such that (a, b) ∈ r and (b, c) ∈ s. Declare an F# function to compute the
+        relational composition.
+    *)
+
+    let relationalComposition r s =         
+        // A = 1,2,3 ; B = 4,5,6 ; C = 7,8,9
+        // r = 1,4; 2,4; 3,4; 2,5; 1,5 ; s = 4,7; 4,8; 5,8
+        //r ** s = 1,7; 2,7; 3,7; 2,8; 1,8   
+        r |> Set.fold(
+            fun composition (a, b) ->
+                let newCompositionValues = 
+                    s 
+                        |> Set.filter (fun (b', c) -> b=b')
+                        |> Set.map (fun (b', c) -> (a, c))
+
+                Set.union composition newCompositionValues
+        ) Set.empty   
