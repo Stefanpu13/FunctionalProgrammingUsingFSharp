@@ -70,3 +70,22 @@ module E =
 
                 Set.union composition newCompositionValues
         ) Set.empty   
+
+    (* 5.6.6
+        A relation r from a set A to the same set A is said to be transitive if (a1, a2) ∈ r and
+        (a2, a3) ∈ r implies (a1, a3) ∈ r for any elements a1, a2 and a3 in A. The transitive closure
+        of a relation r is the smallest transitive relation containing r. If r contains n elements, then
+        the transitive closure can be computed as the union of the following n relations:
+        r ∪ (r ◦◦ r) ∪ (r ◦◦ r ◦◦ r) ∪ · · · ∪ (r ◦◦ r ◦◦ · · · ◦◦ r)
+        Declare an F# function to compute the transitive closure.
+    *)
+
+    // See: http://math.stackexchange.com/questions/1255179/determining-whether-a-relation-is-transitive-or-not
+    let transitiveClosure r = 
+        let rec transitiveClosure result currentRelationComposition = function
+        | 0 -> result
+        | n -> 
+            let newRelationComposition = relationalComposition currentRelationComposition r 
+            transitiveClosure (Set.union result newRelationComposition) newRelationComposition (n - 1)
+        
+        transitiveClosure r r ((Set.count r))

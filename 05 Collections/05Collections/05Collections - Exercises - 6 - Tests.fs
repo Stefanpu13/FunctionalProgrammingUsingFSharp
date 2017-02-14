@@ -114,7 +114,6 @@ type ``symmetric closure tests``() =
 // relation composition tests
 [<TestFixture>]
 type ``relation composition tests``() =
-
     [<Test>]
     member t.``If r = [(1,4); (2,5)], s = [(4, 7); (5,8)], then  r**s should be [(1, 7);(2, 8)]`` () = 
         let r = Set [(1,4); (2,5)]
@@ -150,4 +149,41 @@ type ``relation composition tests``() =
         let r = Set [(1,4);(1,5)]
         let s = Set [(6,8)]
         relationalComposition r s |> shouldEqual (Set [])
-    
+ 
+//transitive relation closure tests
+[<TestFixture>]
+type ``transitive relation closure tests``() =
+    [<Test>]
+    member t.``If r = [(1,2); (2,1)], then transitive closure should be [(1,2);(2,1);(1,1);(2;2)]`` () = 
+        let r = Set [(1,2); (2,1)]
+        
+        transitiveClosure r|> shouldEqual (Set [(1, 2);(2, 1);(1,1);(2,2)])
+
+    [<Test>]
+    member t.``If r = [(1,2); (1,1)], then transitive closure should be [(1,2);(1,1)]`` () = 
+        let r = Set [(1,2); (1,1)]
+        
+        transitiveClosure r|> shouldEqual (Set [(1,2); (1,1)])
+
+    [<Test>]
+    member t.``If r = [(2,1); (2,2)], then transitive closure should be [(2,1);(2,2)]`` () =         
+        let r = Set [(2,1); (2,2)]
+        
+        transitiveClosure r|> shouldEqual (Set [(2,1); (2,2)])
+
+    [<Test>]
+    member t.``If r = [(1,1); (2,2)], then transitive closure should be [(1,1);(2,2)]`` () = 
+        let r = Set [(1,1); (2,2)]
+        
+        transitiveClosure r|> shouldEqual (Set [(1,1);(2,2)])    
+
+    [<Test>]
+    member t.``If r = [(2,1)], then transitive closure should be [(2, 1)]`` () = 
+        // Is this test correct? Shouldn`t every relation have transitive closure? - Yes
+        // Transitive closure: When (a,b) in R and (b,c) in R implies that (a, c) in R
+        // But here r concsists only of (2, 1), so there is no (a, b) and (b, c).
+        // Hense, it is transitive "by vacuity"??
+        // See: http://math.stackexchange.com/questions/1255179/determining-whether-a-relation-is-transitive-or-not
+        let r = Set [(2,1)]
+        
+        transitiveClosure r|> shouldEqual (Set [(2,1)])
