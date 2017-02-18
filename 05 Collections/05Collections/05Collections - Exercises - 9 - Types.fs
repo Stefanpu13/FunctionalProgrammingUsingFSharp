@@ -5,7 +5,7 @@ module T =
     module Discount =         
         [<CompilerMessageAttribute ("Do not create discounts using the \"Discount\" constructor.
         Validation will be skipped.", 1)>] 
-        type D = Discount of float
+        type Discount = Discount of float
         let create d = 
             if d < 0.0 || d > 0.99
             then None
@@ -17,7 +17,8 @@ module T =
     type ArticleName = ArticleName of string
     type NoPieces = NoPieces of int
     type Price = Price of int    
-    type Register = Register of Map<ArticleCode, ArticleName * Price * Discount.D option>
+    type Register = Register of Map<ArticleCode, ArticleName * Price * Discount.Discount option>
+    // The purchase type for exercise 10
     type Purchase = Purchase of Map<ArticleCode, NoPieces>
     type Info = Info of NoPieces * ArticleName * Price
     type Infoseq = Infoseq of Info list

@@ -57,7 +57,9 @@
     <Compile Include="05Collections - Exercises - 7 - Tests.fs" />
     <Compile Include="05Collections - Exercises - 8.fs" />
     <Compile Include="05Collections - Exercises - 8 - Tests.fs" />
-    <Compile Include="05Collections - Exercises - 10 - Types.fs" />
+    <Compile Include="05Collections - Exercises - 9 - Types.fs" />
+    <Compile Include="05Collections - Exercises - 9.fs" />
+    <Compile Include="05Collections - Exercises - 9 - Tests.fs" />    
     <Compile Include="05Collections - Exercises - 10.fs" />
     <Compile Include="05Collections - Exercises - 10 - Tests.fs" />
   </ItemGroup>

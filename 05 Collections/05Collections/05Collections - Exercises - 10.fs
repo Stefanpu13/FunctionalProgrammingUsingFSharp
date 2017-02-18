@@ -1,4 +1,5 @@
 namespace Exercises10
+open Exercises9.E
 open Types.T
 // #nowarn
 module E = 
