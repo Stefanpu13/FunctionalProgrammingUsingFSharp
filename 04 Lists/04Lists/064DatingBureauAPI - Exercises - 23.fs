@@ -11,7 +11,8 @@ module API =
         | l -> true
 
     let private commonThemes themes1 themes2 = 
-        // Preserves static type safety if new themes are added or themes are removed
+        // If directly using "themes1" and "themes2" and theme is added/removed this method will still compile
+        // Creating new values preserves static type safety if new themes are added or themes are removed
         let t1 = {Sports = themes1.Sports; Music = themes1.Music; Reading = themes1.Reading;}
         let t2 = {Sports = themes2.Sports; Music = themes2.Music; Reading = themes2.Reading;}
         
