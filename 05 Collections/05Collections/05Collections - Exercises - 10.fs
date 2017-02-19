@@ -8,7 +8,8 @@ module E =
         Extend the cash register example to take discounts for certain articles into account. For example,
         find a suitable representation of discounts and revise the function to make a bill accordingly.
     *)    
-    let makeBill3 (Register reg) (Purchase pur) =
+    // Register is visible single case union constructor, while Purchase is not
+    let makeBill3 (Register reg) (pur:Purchase.Purchase) =
         let f ac (NoPieces np) (Bill (Infoseq infos, Price billprice)) =
             let (aname, Price aprice, discount) = Map.find ac reg
             let tprice = 
@@ -19,4 +20,4 @@ module E =
                 | None -> np * aprice
 
             Bill ((Infoseq (Info (NoPieces np, aname, Price tprice):: infos)), Price (tprice+billprice))
-        Map.foldBack f pur (Bill (Infoseq [], Price 0))
+        Map.foldBack f (Purchase.value pur) (Bill (Infoseq [], Price 0))

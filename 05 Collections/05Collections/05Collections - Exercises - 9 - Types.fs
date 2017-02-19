@@ -17,7 +17,7 @@ module T =
     type Price = Price of int    
     type Register = Register of Map<ArticleCode, ArticleName * Price * Discount.Discount option>
     // The purchase type for exercise 10
-    type Purchase = Purchase of Map<ArticleCode, NoPieces>
+    // type Purchase = Purchase of Map<ArticleCode, NoPieces>
     type Info = Info of NoPieces * ArticleName * Price
     type Infoseq = Infoseq of Info list
     type Bill = Bill of Infoseq * Price
