@@ -1,15 +1,13 @@
 namespace Types
-// http://stackoverflow.com/questions/3740566/f-suppress-warnings see accepted answer
-#nowarn "1"
+
 module T = 
-    module Discount =         
-        [<CompilerMessageAttribute ("Do not create discounts using the \"Discount\" constructor.
-        Validation will be skipped.", 1)>] 
-        type Discount = Discount of float
+    module Discount = 
+        type Discount = private Discount of float
         let create d = 
             if d < 0.0 || d > 0.99
             then None
             else Some (Discount d)
+
         let apply f (Discount s) = f s
         let value s = apply id s
 
