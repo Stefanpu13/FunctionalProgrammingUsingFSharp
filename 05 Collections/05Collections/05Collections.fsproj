@@ -62,6 +62,12 @@
     <Compile Include="05Collections - Exercises - 9 - Tests.fs" />    
     <Compile Include="05Collections - Exercises - 10.fs" />
     <Compile Include="05Collections - Exercises - 10 - Tests.fs" />
+    <Compile Include="05Collections - Exercises - 11.0 - Helpers.fs" />
+    <Compile Include="05Collections - Exercises - 11.1 - Types.fs" />
+    <Compile Include="05Collections - Exercises - 11.2 - ClientHelpers.fs" />
+    <Compile Include="05Collections - Exercises - 11.3 - ClientsRepo.fs" />
+    <Compile Include="05Collections - Exercises - 11.4 - DatingBureuAPI.fs" />
+    <Compile Include="05Collections - Exercises - 11.5 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

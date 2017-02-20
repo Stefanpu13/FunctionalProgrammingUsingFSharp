@@ -3,7 +3,7 @@ open NUnit.Framework
 open FsUnitTyped
 open Exercises9.E
 open Exercises10.E
-open Types.T
+open Exercise9.Types.T
 
 [<TestFixture>]
 type ``all makeBill3 using fold tests``() =

@@ -1,4 +1,4 @@
-namespace Types
+namespace Exercise9.Types
 
 module T = 
     module Discount = 

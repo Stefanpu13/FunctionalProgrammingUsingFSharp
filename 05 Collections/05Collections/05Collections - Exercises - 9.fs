@@ -1,5 +1,5 @@
 namespace Exercises9
-open Types.T
+open Exercise9.Types.T
 module E = 
     (* 5.9
         Declare a function to give a purchase map (see Version 3 on Page 118) on the basis of a list of
