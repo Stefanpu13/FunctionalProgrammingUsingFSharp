@@ -37,10 +37,9 @@ module H =
         {clientWithSomeInterests with ThemesOfInterest = Some { clientWithSomeInterests.ThemesOfInterest.Value with Reading = interests;}}
 
     let private toUniqueSortedList l = (List.ofSeq >> L.unique >> List.sort) l
-    let private toUniqueSet l = Set.ofSeq  l
 
     let generateRandomInterests client = 
-        let addSportInterests  = randomInterests<Sport> >> toUniqueSet >> clientWithGeneratedSportsInterests
+        let addSportInterests  = randomInterests<Sport> >> Set.ofSeq >> clientWithGeneratedSportsInterests
         let addMusicInterests = randomInterests<Music> >> toUniqueSortedList >> clientWithGeneratedMusicInterests 
         let addReadingInterests = randomInterests<Reading> >> toUniqueSortedList >> clientWithGeneratedReadingInterests
 
