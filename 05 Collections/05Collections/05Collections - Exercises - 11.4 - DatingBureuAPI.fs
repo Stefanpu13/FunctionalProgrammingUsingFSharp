@@ -12,6 +12,10 @@ module API =
 
     let private commonSubthemesSet subTheme1 subTheme2 =     
         not (Set.isEmpty (Set.intersect subTheme1 subTheme2))
+
+    let private commonSubthemesMap (ReadingMap subthemes1) (ReadingMap subthemes2) = 
+        Map.fold (fun foundCommonInterests reading v -> 
+            foundCommonInterests || (Map.containsKey reading subthemes2)) false subthemes1 
         
 
     let private commonThemes themes1 themes2 = 
@@ -24,7 +28,7 @@ module API =
 
         (commonSubthemesSet t1.Sports t2.Sports) ||
         (commonSubthemes t1.Music t2.Music) ||
-        (commonSubthemes t1.Reading t2.Reading)
+        (commonSubthemesMap t1.Reading t2.Reading)
 
     let private haveCommonInterests cl1 cl2 =
         let {ThemesOfInterest = themes1} = cl1

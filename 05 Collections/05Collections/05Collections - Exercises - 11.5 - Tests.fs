@@ -36,7 +36,7 @@ let client1 = {
     ThemesOfInterest = Some {
         Sports = set [Football; Tenis]
         Music = [Rock];
-        Reading = [Poetry]
+        Reading = ReadingMap (Map.ofList [(Poetry, true)])
     }
 }
 
@@ -83,7 +83,7 @@ type ``multiply polynomial by number tests``() =
             ThemesOfInterest = Some {
                 Sports =set [Baseball]
                 Music = [Jazz];
-                Reading = [Magazines]
+                Reading = ReadingMap (Map.ofList [(Magazines, true)])
             }
         }
 
@@ -101,7 +101,7 @@ type ``multiply polynomial by number tests``() =
             ThemesOfInterest = Some {
                 Sports =set [Football]
                 Music = [HipHop];
-                Reading = [Novels] 
+                Reading = ReadingMap (Map.ofList [(Novels, true)]) 
             }
         }
 
@@ -119,7 +119,7 @@ type ``multiply polynomial by number tests``() =
             ThemesOfInterest = Some {
                 Sports =set [Baseball]
                 Music = [Rock];
-                Reading = [Novels] 
+                Reading = ReadingMap (Map.ofList [(Novels, true)]) 
             }
         }
 
@@ -137,7 +137,7 @@ type ``multiply polynomial by number tests``() =
             ThemesOfInterest = Some {
                 Sports = set [Baseball]
                 Music = [Jazz];
-                Reading = [Poetry] 
+                Reading = ReadingMap (Map.ofList [(Poetry, true)]) 
             }
         }
 

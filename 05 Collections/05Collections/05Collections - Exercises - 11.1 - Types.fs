@@ -9,10 +9,12 @@ module T =
 
     type Reading = Poetry|SciFi|Magazines|Novels|``Techincal Literature``
 
+    type ReadingMap = ReadingMap of Map<Reading, bool>
+
     type ThemesOfInterest = {
         Sports: Sport Set;
-        Music: Music list; 
-        Reading: Reading list;
+        Music: Music list;         
+        Reading: ReadingMap
         }
     type Client = { 
         Id: int

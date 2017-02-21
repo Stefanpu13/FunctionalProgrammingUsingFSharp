@@ -22,7 +22,7 @@ module H =
     let private getClientWithSomeInterests cl = 
         match cl.ThemesOfInterest with
         | Some i -> cl
-        | None -> {cl with ThemesOfInterest = Some {Sports = set []; Music = []; Reading = [];}}
+        | None -> {cl with ThemesOfInterest = Some {Sports = set []; Music = []; Reading = ReadingMap( Map.ofList []);}}
 
     let private clientWithGeneratedSportsInterests interests client  =
         let clientWithSomeInterests = getClientWithSomeInterests client
@@ -38,10 +38,13 @@ module H =
 
     let private toUniqueSortedList l = (List.ofSeq >> L.unique >> List.sort) l
 
+    let private toMap s =  (Seq.map (fun r -> (r, true)) >>  Map.ofSeq >> ReadingMap) s
+
+
     let generateRandomInterests client = 
         let addSportInterests  = randomInterests<Sport> >> Set.ofSeq >> clientWithGeneratedSportsInterests
-        let addMusicInterests = randomInterests<Music> >> toUniqueSortedList >> clientWithGeneratedMusicInterests 
-        let addReadingInterests = randomInterests<Reading> >> toUniqueSortedList >> clientWithGeneratedReadingInterests
+        let addMusicInterests = randomInterests<Music> >> toUniqueSortedList>> clientWithGeneratedMusicInterests 
+        let addReadingInterests = randomInterests<Reading> >> toMap >> clientWithGeneratedReadingInterests
 
         client 
             |> addSportInterests sportCases                        
