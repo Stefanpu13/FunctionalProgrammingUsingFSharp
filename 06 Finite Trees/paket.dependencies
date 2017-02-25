@@ -1,4 +1,7 @@
+redirects: on
 source https://www.nuget.org/api/v2
-nuget FAKE
-nuget FSharp.Core
-nuget FsUnit
+// Note: pin FAKE, FSharp core and FsUnit until problems with new FSharp version are fixed
+nuget FAKE 4.50
+nuget FSharp.Core 4.0.0.1
+nuget FsUnit 2.3.2
+nuget NUnit.Console
