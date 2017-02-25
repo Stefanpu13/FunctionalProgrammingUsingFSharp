@@ -17,3 +17,4 @@ module E =
             let tprice = np*aprice
             ((np,aname,tprice)::infos, tprice+billprice)
         Map.fold f ([],0) pur 
+          
