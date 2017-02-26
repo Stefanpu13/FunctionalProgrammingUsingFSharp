@@ -2,6 +2,8 @@ module Exercises1Tests
 open NUnit.Framework
 open FsUnitTyped
 open Exercises1.E
+open Exercises1Common.Types
+open Exercises1Common.Utils
 
 // proj setup test
 [<TestFixture>]
