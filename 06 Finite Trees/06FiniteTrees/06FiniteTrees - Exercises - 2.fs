@@ -45,10 +45,5 @@ module E =
 
         let result = (postFix [] expr) |> List.fold(fun str term -> str + " " + term) ""
         
-        result.Substring(1)
-             
-    
-
-    postFix (Add(X, Const 7.0))
-    postFix (Mul(Add(X, Const 7.0), Sub(X, Const 5.0)))
+        result.Substring(1)             
     
