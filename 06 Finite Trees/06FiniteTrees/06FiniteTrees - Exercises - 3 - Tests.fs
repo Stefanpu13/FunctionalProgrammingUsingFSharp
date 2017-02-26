@@ -2,24 +2,9 @@ module Exercises3Tests
 open NUnit.Framework
 open FsUnitTyped
 open Exercises3.E
-open Exercises1Common.Types
+open Exercises1Common.Types.Expression
 open Exercises1Common.Utils
 
-// // Test enhanced toString function
-// [<TestFixture>]
-// type ``Test enhanced toString function``() =
-
-//     [<Test>]
-//     member t.``If expression is (x + 7), result should be "x + 7"`` () = 
-//         toString (Add(X, Const 7.0)) |> shouldEqual "x + 7"
-
-//     [<Test>]
-//     member t.``If expression is (x/2 + 7), result should be "x / 2 + 7"`` () = 
-//         toString (Add(Div(X, Const 2.0), Const 7.0)) |> shouldEqual "x / 2 + 7"
-
-//     [<Test>]
-//     member t.``If expression is (x + 7) * 2, result should be "(x + 7) * 2"`` () = 
-//         toString (Mul(Add(X, Const 7.0), Const 2.0)) |> shouldEqual "(x + 7) * 2"
 
 // Test enhanced toStringSubtrahend function
 [<TestFixture>]

@@ -2,7 +2,7 @@ module Exercises2Tests
 open NUnit.Framework
 open FsUnitTyped
 open Exercises2.E
-open Exercises1Common.Types
+open Exercises1Common.Types.Expression
 open Exercises1Common.Utils
 
 // proj setup test

@@ -1,6 +1,6 @@
 namespace Exercises1
 module E = 
-    open Exercises1Common.Types
+    open Exercises1Common.Types.Expression
     open Exercises1Common.Utils
     (* 6.1
         Declare a function red of type Fexpr -> Fexpr to reduce expressions generated from the

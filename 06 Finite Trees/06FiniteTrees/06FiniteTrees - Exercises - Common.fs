@@ -1,19 +1,21 @@
 namespace Exercises1Common
 module Types = 
-    type Fexpr = 
-    | Const of float
-    | X
-    | Add of Fexpr * Fexpr
-    | Sub of Fexpr * Fexpr
-    | Mul of Fexpr * Fexpr
-    | Div of Fexpr * Fexpr
-    | Sin of Fexpr
-    | Cos of Fexpr
-    | Log of Fexpr
-    | Exp of Fexpr
+    module Expression =
+        type Fexpr = 
+        | Const of float
+        | X
+        | Add of Fexpr * Fexpr
+        | Sub of Fexpr * Fexpr
+        | Mul of Fexpr * Fexpr
+        | Div of Fexpr * Fexpr
+        | Sin of Fexpr
+        | Cos of Fexpr
+        | Log of Fexpr
+        | Exp of Fexpr
+
 
 module Utils = 
-    open Types
+    open Types.Expression
     let rec D = function
         | Const _ -> Const 0.0
         | X -> Const 1.0

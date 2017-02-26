@@ -1,6 +1,6 @@
 namespace Exercises2
 module E = 
-    open Exercises1Common.Types
+    open Exercises1Common.Types.Expression
     open Exercises1Common.Utils
     (* 6.1
         Postfix form is a particular representation of arithmetic expressions where each operator is

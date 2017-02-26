@@ -1,6 +1,6 @@
 namespace Exercises3
 module E = 
-    open Exercises1Common.Types
+    open Exercises1Common.Types.Expression
     open Exercises1Common.Utils
 
     (* 6.3
