@@ -43,8 +43,3 @@ module E =
         | X -> "x"
         | expr -> "(" + (toString expr) + ")"
 
-    toString (Sub(Add(Const 2.0, X), Sin X))
-    toString (Sub(Add(Const 2.0, X), Sin (Add(X, Const 5.5))))
-    toString (Sub(Add(Const 2.0, X), Add(X, Const 2.0)))
-    toString (Mul(Add(Const 2.0, X), Sub(X, Const 4.0)))
-    toString (Mul(Add(Const 2.0, X), Div(X, Const 4.0)))
