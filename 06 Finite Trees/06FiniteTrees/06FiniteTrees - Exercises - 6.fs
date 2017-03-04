@@ -88,6 +88,30 @@ module E =
 
     // deleteTailRecursive 1 bigT
 
+    (* examples to visualize result fo continuations
+        (fun treeAfterDeletion1 -> 
+            (fun treeAfterDeletion2 -> 
+                (fun treeAfterDeletion3 ->
+                (Node(treeAfterDeletion3, v3, rightTree3))) 
+            (Node(treeAfterDeletion2, v2, rightTree2))) 
+        (Node(treeAfterDeletion1, v1, rightTree1))) rightTree
+
+        (fun treeAfterDeletion -> (fun treeAfterDeletion -> f (Node(treeAfterDeletion, v, rightTree))) (Node(treeAfterDeletion, v, rightTree)))
+
+        treeAfterDeletion2 = Node(treeAfterDeletion3, v3, rightTree3)
+
+        treeAfterDeletion1 = Node(Node(treeAfterDeletion3, v3, rightTree3), v2, rightTree2)
+
+        Node(Node(Node(treeAfterDeletion3, v3, rightTree3), v2, rightTree2), v1, rightTree1)
+
+        (fun tr1 ->
+            (fun tr2 ->
+                (fun tr3 -> (Node(leftTree3, v3, tr3))) 
+            (Node(tr2, v2, rightTree2))) 
+        (Node(tr1, v1, rightTree1)))
+
+        Node(Node(Node(leftTree3, v3, Leaf)), v2, rightTree2), v1, rightTree1)
+    *)
                 
 
         
