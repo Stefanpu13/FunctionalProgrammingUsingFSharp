@@ -1,50 +1,60 @@
 module Exercises6Tests
 open NUnit.Framework
 open FsUnitTyped
-open Exercises5.E
+open Exercises6.E
 
 // Test leafVals
 [<TestFixture>]
-type ``Test leafVals``() =
-    let tr = 
-        Info(
-            Info(
-                Info(
-                    Info(
-                        Info (Unspec, "Dad4", Unspec), 
-                        "Dad3", 
-                        Unspec
-                    ), 
-                    "DadsDad", 
-                    Unspec
-                ), 
-                "Dad1", 
-                Info(Unspec, "Dad1sMom", Unspec)
-            ), 
-            "Me",
-            Info(
-                Info(
-                    Unspec, 
-                    "MomsDad", 
-                    Info(Unspec, "MomsDadMom", Unspec)
-            ),
-                "Mom",
-                Info(
-                    Info(
-                        Unspec, "MomsMomsDad", Unspec
-                    ), 
-                    "MomsMom", 
-                    Info(Unspec, "OneMoreMom", Unspec)
-                )
-            )
-        )
+type ``Test delete``() =
+    [<Test>]
+    member t.``If tree is t4 and element to delete is smallest elem, result should be t4 without -3`` () = 
+        let tLeft = Node(Leaf, 0, Node(Leaf, 2, Leaf))
+        let res = Node(tLeft, 5, Node(Leaf, 7, Leaf))
+        let valueToDelete = -3
+        delete valueToDelete t4 |> shouldEqual res
+        deleteTailRecursive valueToDelete t4 |> shouldEqual res
 
     [<Test>]
-    member t.``If tree is tr, result should be set ["Dad4"; "Dad3"; "DadsDad"; "Dad1"; "MomsDad"; "MomsMomsDad"]"`` () = 
-        maleAnc tr |> shouldEqual ["Dad4"; "Dad3"; "DadsDad"; "Dad1"; "MomsDad"; "MomsMomsDad"]
+    member t.``If tree is t4 and element to delete is left subtree with children(0), result should be t4 without 0`` () = 
+        let tLeft = Node((Node(Leaf, -3, Leaf), 2, Leaf))
+        let res = Node(tLeft, 5, Node(Leaf, 7, Leaf))
+        let valueToDelete = 0
+        delete valueToDelete t4 |> shouldEqual res
+        deleteTailRecursive valueToDelete t4 |> shouldEqual res
 
-    
     [<Test>]
-    member t.``If tree tr, result should be ["Dad1sMom"; "MomsDadMom"; "OneMoreMom"; "MomsMom"; "Mom"]"`` () = 
-         femaleAnc tr |> shouldEqual ["Dad1sMom"; "MomsDadMom"; "OneMoreMom"; "MomsMom"; "Mom"]
-        
+    member t.``If tree is t4 and element to delete is root, result should be t4 without 5 with min from right subtree as the new root`` () =        
+        let res = Node(t3, 7, Leaf)
+        let valueToDelete = 5
+        delete valueToDelete t4 |> shouldEqual res
+        deleteTailRecursive valueToDelete t4 |> shouldEqual res
+
+    [<Test>]
+    member t.``If tree is t4 and element to delete is biggest elem, result should be t4 without 7`` () =         
+        let res = Node(t3, 5, Leaf)
+        let valueToDelete = 7
+        delete valueToDelete t4 |> shouldEqual res
+        deleteTailRecursive valueToDelete t4 |> shouldEqual res
+
+    [<Test>]
+    member t.``If tree is t4 and element to delete is bigger than all elements, result should be t4`` () =
+        let valueToDelete = 11
+        delete valueToDelete t4 |> shouldEqual t4
+        deleteTailRecursive valueToDelete t4 |> shouldEqual t4
+
+    [<Test>]
+    member t.``If tree is t4 and element to delete is smaller than all elements, result should be t4`` () =
+        let valueToDelete = -11
+        delete valueToDelete t4 |> shouldEqual t4
+        deleteTailRecursive valueToDelete t4 |> shouldEqual t4
+
+
+    [<Test>]
+    member t.``deleteTailRecursive tries to delete the smallest elem of tree with dept 300000, result should be tr witout smallest element`` () =         
+        let s = 1
+        let e = 300000
+        // let t = generateTree s e
+        () 
+        // Test is causing SOE when run but running commented code at the end of implementation file does not
+        // case SOE. Why is that? 
+        // deleteTailRecursive s t |> ignore

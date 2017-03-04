@@ -3,9 +3,9 @@ open NUnit.Framework
 open FsUnitTyped
 open Exercises5.E
 
-// Test leafVals
+// Test maleAnc and femaleAnc
 [<TestFixture>]
-type ``Test leafVals``() =
+type ``Test maleAnc and femaleAnc``() =
     let tr = 
         Info(
             Info(
