@@ -38,7 +38,12 @@ Target "Test" (fun _ ->
     !! (buildDir + "/06FiniteTrees.dll")
         |> NUnit3 (fun p ->
             { p with
-                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe" })
+                ToolPath = "packages/NUnit.ConsoleRunner/tools/nunit3-console.exe";
+                (* 
+                    See:https://github.com/nunit/nunit/issues/1834 for why option is set
+                    SOE happens due to test for tail recursiveness
+                *)
+                ProcessModel=SingleProcessModel })
 )
 
 
