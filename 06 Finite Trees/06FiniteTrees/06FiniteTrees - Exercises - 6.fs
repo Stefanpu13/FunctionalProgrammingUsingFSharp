@@ -110,7 +110,7 @@ module E =
             (Node(tr2, v2, rightTree2))) 
         (Node(tr1, v1, rightTree1)))
 
-        Node(Node(Node(leftTree3, v3, Leaf)), v2, rightTree2), v1, rightTree1)
+        Node(Node(Node(leftTree3, v3, Leaf)), v2, rightTree2), v1, rightTree1)  
     *)
                 
 
