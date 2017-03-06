@@ -32,15 +32,6 @@ module E =
         | Disj(a, b)  -> Disj (toNegationNormalForm a, toNegationNormalForm b)
         | proposition -> proposition
 
-
-    toNegationNormalForm <| (Atom "a" |> Neg |> Neg |> Neg |> Neg |> Neg)
-    let proposition = Conj(Conj(Atom "a1", Neg(Neg(Atom "a2"))), Neg(Disj(Conj(Atom "b1", Atom "b2"), Atom "c")))
-    toNegationNormalForm proposition
-
-    toNegationNormalForm <| (Neg(Disj(Neg (Atom "a"), Neg(Atom "b"))))
-
-    toNegationNormalForm <| (Neg(Conj(Neg (Atom "a"), Neg(Atom "b"))))
-
     (* 6.7.3
         A literal is an atom or its negation. A proposition is in conjunctive normal form if it is a
         conjunction of propositions, where each conjunct (i.e., proposition in the conjunction) is a
@@ -84,7 +75,7 @@ module E =
             | Disj(Disj(p), Literal q) -> flattenDisjunction (q::literals) (Disj(p))
             | Disj(Literal p, Disj(q)) -> flattenDisjunction (p::literals) (Disj(q))
             | Disj(Disj(p) as d1, (Disj(q)as d2)) ->  
-                let (flattenedDisj1) = (flattenDisjunction literals d1)
+                let (flattenedDisj1) = flattenDisjunction literals d1
                 let (flattenedDisj2) = flattenDisjunction literals d2
                 flattenFlattenedDisj (FlattenedDisj ([flattenedDisj1; flattenedDisj2]))
             | Disj(Literal p, (Literal q)) -> FlattenedDisj (p::q::literals) 
@@ -104,6 +95,9 @@ module E =
             | Disj(p, q) as disj -> 
                  let d = Disj(toConjuctiveNormalForm p,toConjuctiveNormalForm q)                 
                  if d = disj then d else toConjuctiveNormalForm d
+            | Conj(p, q) as conj -> 
+                 let d = Conj(toConjuctiveNormalForm p,toConjuctiveNormalForm q)                 
+                 if d = conj then d else toConjuctiveNormalForm d
             | p -> p
 
         proposition 
@@ -130,12 +124,12 @@ module E =
     let prop2 = Disj(Disj(Conj(Atom "a", Atom "b"), Conj(Atom "c", Atom "d")), Atom "e")
     //http://math.stackexchange.com/questions/214338/how-to-convert-to-conjunctive-normal-form
     toConjuctiveNormalForm prop2
-    let alotNegs = (Atom "a" |> Neg |> Neg |> Neg |> Neg |> Neg)
+    let alotNegs = (Atom "b" |> Neg |> Neg |> Neg |> Neg |> Neg)
     let disjWithDoubleNegs = Disj(alotNegs, Conj(Neg(Neg(Atom "b")), Neg(Neg(Atom "c"))))
     toConjuctiveNormalForm <| Disj(alotNegs, Conj(Neg(Neg(Atom "b")), Neg(Neg(Atom "c"))))
 
     let secondDisj = Disj(Conj(Atom "e",Neg(Atom "d")), Conj(Atom "f", Neg(Neg(Atom "i"))))
-    Conj(disjWithDoubleNegs, secondDisj) |> (toNegationNormalForm >> toConjuctiveNormalForm)
+    Conj(disjWithDoubleNegs, secondDisj) |> toConjuctiveNormalForm
 
     (* 6.7.4
         A proposition is a tautology if it has truth value true for any assignment of truth values to the
@@ -152,9 +146,10 @@ module E =
                 let rec containsNegation negationFound = function
                     | x::xs -> 
                         negationFound || 
-                        List.exists(fun p -> x = Neg(p) || Neg(x)= p) xs
-                        || containsNegation false xs 
+                        (List.exists(fun p -> x = Neg(p) || Neg(x) = p) xs) || 
+                        containsNegation false xs 
                     | [] -> negationFound
+
                 containsNegation false l
             | Disj (Literal a, Literal b) -> Neg a = b || a = Neg b                 
             | _ -> false
@@ -167,10 +162,21 @@ module E =
                 )
             |> isTautology false
         
-    let prop3 = 
+    let prop3 =         
         Conj(
             Conj(
-                FlattenedDisj[Atom "a"; Atom "b"; Neg( Atom "a"); Disj(Atom "c", Neg(Atom "c"))], 
-                Disj(Atom "d", Neg(Atom "d"))), Disj(Atom "e", Neg(Atom "e")))
+                Disj(
+                    Disj(Atom "a", Neg( Atom "a")), 
+                    Disj(Atom "c", Neg(Atom "c"))
+                ),
+                Disj(Atom "b", Neg(Atom "b")) 
+            ), 
+            Conj(
+                Disj(Atom "d", Neg(Atom "d")), 
+                Disj(Atom "e", Neg(Atom "e"))
+            )
+        )
 
+    toConjuctiveNormalForm prop3
+    isTautology prop3 
 

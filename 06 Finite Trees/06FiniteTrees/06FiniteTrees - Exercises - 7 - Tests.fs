@@ -1,60 +1,86 @@
 module Exercises7Tests
 open NUnit.Framework
 open FsUnitTyped
-open Exercises6.E
+open Exercises7.E
 
-// Test leafVals
+// Test toNegationNormalForm
 [<TestFixture>]
-type ``Test delete``() =
+type ``Test toNegationNormalForm``() =
+    let allNegationsAreOnAtoms proposition = 
+        let rec allNegationsAreOnAtoms examinedNegationsOnAtoms = function
+            | Neg(Atom b) -> examinedNegationsOnAtoms && true
+            | Neg(p) -> examinedNegationsOnAtoms && false
+            | Conj(a, b) | Disj(a, b) -> 
+                (allNegationsAreOnAtoms examinedNegationsOnAtoms a) && 
+                (allNegationsAreOnAtoms examinedNegationsOnAtoms b)
+            | p -> examinedNegationsOnAtoms
+            
+        allNegationsAreOnAtoms true proposition
+
+    [<Test>]
+    member t.``If propposition is odd number of time nested Neg (a), result should be Neg(a)`` () = 
+        let proposition = Neg(Neg(Neg(Atom "a")))
+        toNegationNormalForm proposition |> shouldEqual  (Neg(Atom "a"))
+
+    [<Test>]
+    member t.``If propposition is even number of time nested Neg (a), result should be a`` () = 
+        let proposition = Neg(Neg(Neg(Neg(Atom "a"))))
+        toNegationNormalForm proposition |> shouldEqual  (Atom "a")
+
+    [<Test>]
+    member t.``If propposition is Neg(Conj(a, b)), result should be Disj(Neg(a),Neg(b))`` () = 
+        let proposition = Neg(Conj(Atom "a", Atom "b"))
+        toNegationNormalForm proposition |> shouldEqual  (Disj(Neg(Atom "a"),Neg(Atom "b")))
+
+    [<Test>]
+    member t.``If propposition is Neg(Disj(a, b)), result should be Conj(Neg(a),Neg(b))`` () = 
+        let proposition = Neg(Disj(Atom "a", Atom "b"))
+        toNegationNormalForm proposition |> shouldEqual  (Conj(Neg(Atom "a"),Neg(Atom "b")))
+
+    [<Test>]
+    member t.``If propposition is Neg of nested conjuctions, result should be all Negations applied to Atoms`` () = 
+        let proposition = Neg(Conj(Conj( Atom "a", Conj(Atom "b", Atom "c")), Conj(Atom "d", Atom "e")))
+        proposition 
+            |> toNegationNormalForm
+            |> allNegationsAreOnAtoms
+            |> shouldEqual  true
+
+    [<Test>]
+    member t.``If propposition is Neg of nested disjuctions, result should be all Negations applied to Atoms`` () = 
+        let proposition = Neg(Disj(Disj( Atom "a", Disj(Atom "b", Atom "c")), Disj(Atom "d", Atom "e")))
+        proposition 
+            |> toNegationNormalForm
+            |> allNegationsAreOnAtoms
+            |> shouldEqual  true
+
+    [<Test>]
+    member t.``If propposition is nested disjuctions and conjuctions, result should be all Negations applied to Atoms`` () = 
+        let proposition = 
+            Conj(
+                Disj(
+                    Neg(Disj( 
+                            Atom "a", 
+                            Disj(Atom "b", Atom "c")
+                    )), 
+                    Disj(Atom "d", Atom "e")
+                ), 
+                Neg(
+                    Conj(
+                        Atom "g", 
+                        Disj(Atom "h", Atom "i")
+                    )
+                )
+            )
+        proposition 
+            |> toNegationNormalForm
+            |> allNegationsAreOnAtoms
+            |> shouldEqual  true
+
+
+// Test toConjuctionNormalForm
+[<TestFixture>]
+type ``Test toConjuctionNormalForm``() =
     [<Test>]
     member t.``If tree is t4 and element to delete is smallest elem, result should be t4 without -3`` () = 
-        let tLeft = Node(Leaf, 0, Node(Leaf, 2, Leaf))
-        let res = Node(tLeft, 5, Node(Leaf, 7, Leaf))
-        let valueToDelete = -3
-        delete valueToDelete t4 |> shouldEqual res
-        deleteTailRecursive valueToDelete t4 |> shouldEqual res
-
-    [<Test>]
-    member t.``If tree is t4 and element to delete is left subtree with children(0), result should be t4 without 0`` () = 
-        let tLeft = Node((Node(Leaf, -3, Leaf), 2, Leaf))
-        let res = Node(tLeft, 5, Node(Leaf, 7, Leaf))
-        let valueToDelete = 0
-        delete valueToDelete t4 |> shouldEqual res
-        deleteTailRecursive valueToDelete t4 |> shouldEqual res
-
-    [<Test>]
-    member t.``If tree is t4 and element to delete is root, result should be t4 without 5 with min from right subtree as the new root`` () =        
-        let res = Node(t3, 7, Leaf)
-        let valueToDelete = 5
-        delete valueToDelete t4 |> shouldEqual res
-        deleteTailRecursive valueToDelete t4 |> shouldEqual res
-
-    [<Test>]
-    member t.``If tree is t4 and element to delete is biggest elem, result should be t4 without 7`` () =         
-        let res = Node(t3, 5, Leaf)
-        let valueToDelete = 7
-        delete valueToDelete t4 |> shouldEqual res
-        deleteTailRecursive valueToDelete t4 |> shouldEqual res
-
-    [<Test>]
-    member t.``If tree is t4 and element to delete is bigger than all elements, result should be t4`` () =
-        let valueToDelete = 11
-        delete valueToDelete t4 |> shouldEqual t4
-        deleteTailRecursive valueToDelete t4 |> shouldEqual t4
-
-    [<Test>]
-    member t.``If tree is t4 and element to delete is smaller than all elements, result should be t4`` () =
-        let valueToDelete = -11
-        delete valueToDelete t4 |> shouldEqual t4
-        deleteTailRecursive valueToDelete t4 |> shouldEqual t4
-
-
-    [<Test>]
-    member t.``deleteTailRecursive tries to delete the smallest elem of tree with dept 300000, result should be tr witout smallest element`` () =         
-        let s = 1
-        let e = 300000
-        // let t = generateTree s e
-        () 
-        // Test is causing SOE when run but running commented code at the end of implementation file does not
-        // case SOE. Why is that? 
-        // deleteTailRecursive s t |> ignore
+        let proposition = Neg(Neg(Neg(Atom "a")))
+        toNegationNormalForm proposition |> shouldEqual  (Neg(Atom "a"))
