@@ -14,8 +14,6 @@ module E =
         | Disj of (Proposition * Proposition) // v  
         | FlattenedDisj of Proposition list
 
-    let x = Conj (Neg(Atom "string"), Atom "hi")
-
     (* 6.7.2
         A proposition is in negation normal form if the negation operator only appears as applied
         directly to atoms. Write an F# function transforming a proposition into an equivalent proposition
@@ -49,10 +47,7 @@ module E =
         disjunction of literals. Write an F# function that transforms a proposition into an equivalent
         proposition in conjunctive normal form, using the above result and the laws:
             p ∨ (q ∧ r) ⇔ (p ∨ q) ∧ (p ∨ r)
-            (p ∧ q) ∨ r ⇔ (p ∨ r) ∧ (q ∨ r) - yes, for CNS only one of the distributive laws should be used
-            
-            (P⋁(Q⋀R))↔(P⋁Q)⋀(P⋁R)           
-            (P⋀(Q⋁R))↔(P⋀Q)⋁(P⋀R)
+            (p ∧ q) ∨ r ⇔ (p ∨ r) ∧ (q ∨ r)
     *)
 
     let (|Literal|_|) p =
@@ -62,17 +57,18 @@ module E =
         | _ -> None
 
     let flattenFlattenedDisj flatenedDisj =         
-        let rec inOrder literals = function            
-            | FlattenedDisj (x::xs) -> (inOrder literals x)  @ (List.fold inOrder [] xs)
+        let rec flattenFlattenedDisj literals = function            
+            | FlattenedDisj (x::xs) -> (flattenFlattenedDisj literals x)  @ (List.fold flattenFlattenedDisj [] xs)
             | x -> x::literals           
 
-        FlattenedDisj (inOrder [] flatenedDisj)
+        FlattenedDisj (flattenFlattenedDisj [] flatenedDisj)
     let fls = 
         FlattenedDisj[
             FlattenedDisj[
                 FlattenedDisj [
                     FlattenedDisj[ Atom "a"; Atom "b"]; 
-                Atom "c"];
+                    Atom "c"
+                ];
                 FlattenedDisj[
                     FlattenedDisj[Atom "d"; Atom "e"]
                 ]; 
@@ -94,9 +90,11 @@ module E =
             | Disj(Literal p, (Literal q)) -> FlattenedDisj (p::q::literals) 
             | Conj (p, q) -> Conj (flattenDisjunction literals p, flattenDisjunction literals q)            
             | p -> p
+
         flattenDisjunction [] prop
 
     flattenDisjunction (Conj(Conj(Disj(Disj(Disj(Disj(Atom "a", Atom "b"), Atom "c"), Atom "d"), Atom "e"), Atom "f"), Atom "r"))
+    // for tests see: http://math.stackexchange.com/questions/214338/how-to-convert-to-conjunctive-normal-form
     let toConjuctiveNormalForm proposition =
         let rec toConjuctiveNormalForm = function             
             | Disj(p, Conj(q, r)) ->
@@ -121,16 +119,58 @@ module E =
             Disj(
                 Disj(
                     Conj(Atom "a", Atom "b"), 
-                    Conj(Atom "q", Atom "r")
+                    Conj(Atom "c", Atom "d")
                 ), 
-                Atom "z"
+                Atom "e"
             ), 
-            Disj(Conj(Atom "x", Atom "y"), Atom "z" )
+            Disj(Conj(Atom "f", Atom "g"), Atom "h" )
         )
     toConjuctiveNormalForm prop
+
+    let prop2 = Disj(Disj(Conj(Atom "a", Atom "b"), Conj(Atom "c", Atom "d")), Atom "e")
+    //http://math.stackexchange.com/questions/214338/how-to-convert-to-conjunctive-normal-form
+    toConjuctiveNormalForm prop2
     let alotNegs = (Atom "a" |> Neg |> Neg |> Neg |> Neg |> Neg)
     let disjWithDoubleNegs = Disj(alotNegs, Conj(Neg(Neg(Atom "b")), Neg(Neg(Atom "c"))))
     toConjuctiveNormalForm <| Disj(alotNegs, Conj(Neg(Neg(Atom "b")), Neg(Neg(Atom "c"))))
 
     let secondDisj = Disj(Conj(Atom "e",Neg(Atom "d")), Conj(Atom "f", Neg(Neg(Atom "i"))))
     Conj(disjWithDoubleNegs, secondDisj) |> (toNegationNormalForm >> toConjuctiveNormalForm)
+
+    (* 6.7.4
+        A proposition is a tautology if it has truth value true for any assignment of truth values to the
+        atoms. A disjunction of literals is a tautology exactly when it contains the atom as well as
+        the negated atom for some name occurring in the disjunction. A conjunction is a tautology
+        precisely when each conjunct is a tautology. Write a tautology checker in F#, that is, an F#
+        function which determines whether a proposition is a tautology or not.
+    *)
+
+    let isTautology proposition =    
+        let rec isTautology othersAreTautoloies = function            
+            | Conj (p, q) -> (isTautology othersAreTautoloies p)  && (isTautology othersAreTautoloies q) 
+            | FlattenedDisj l -> 
+                let rec containsNegation negationFound = function
+                    | x::xs -> 
+                        negationFound || 
+                        List.exists(fun p -> x = Neg(p) || Neg(x)= p) xs
+                        || containsNegation false xs 
+                    | [] -> negationFound
+                containsNegation false l
+            | Disj (Literal a, Literal b) -> Neg a = b || a = Neg b                 
+            | _ -> false
+
+        proposition 
+            |> (fun p -> 
+                    let converted = toConjuctiveNormalForm p
+                    printfn  "%A" converted
+                    converted
+                )
+            |> isTautology false
+        
+    let prop3 = 
+        Conj(
+            Conj(
+                FlattenedDisj[Atom "a"; Atom "b"; Neg( Atom "a"); Disj(Atom "c", Neg(Atom "c"))], 
+                Disj(Atom "d", Neg(Atom "d"))), Disj(Atom "e", Neg(Atom "e")))
+
+
