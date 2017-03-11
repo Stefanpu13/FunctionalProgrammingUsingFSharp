@@ -33,7 +33,7 @@ module E =
             | ADD | SUB | MULT | DIV | SIN
             | COS | LOG | EXP | PUSH of float
 
-    type Stack = Stack of float list
+    type Stack = Stack of float list | InvalidStack
 
     type Operation = 
     | TwoOperands of (float -> float -> float)
@@ -46,17 +46,20 @@ module E =
         | MULT ->  TwoOperands (*)
         | DIV ->  TwoOperands (/)
         | SIN -> OneOperand sin
-        | COS -> OneOperand (cos)
+        | COS -> OneOperand cos
         | LOG -> OneOperand log
         | EXP -> OneOperand exp
         | PUSH num -> PushOperand num
 
-    let intpInstr (Stack values) instr =
-        match (operation instr, values) with                        
-            | TwoOperands f, (a::b::vals) -> Stack ((f b a)::vals)
-            | OneOperand f, (v::vals) -> Stack ((f v)::vals)
-            | PushOperand v, _ ->  Stack (v::values)
-            | op, s ->  Stack s    
+    let intpInstr stack instr =
+        match stack with
+        | Stack values ->
+            match (operation instr, values) with                        
+                | TwoOperands f, (a::b::vals) -> Stack ((f b a)::vals)
+                | OneOperand f, (v::vals) -> Stack ((f v)::vals)
+                | PushOperand v, _ ->  Stack (v::values)
+                | op, s ->  InvalidStack    
+        | InvalidStack -> InvalidStack
 
     (* 6.8.2
         A program for the calculator is a list of instructions [i1, i2, . . . , in]. A program is executed
@@ -64,17 +67,14 @@ module E =
         empty stack. The result of the execution is the top value of the stack when all instructions
         have been executed.
         Declare an F# function to interpret the execution of a program:
+        intpProg: Instruction list -> float
     *)
 
-    // intpProg: Instruction list -> float
     let intpProg instructions = 
         let stackAfterInstructions = List.fold intpInstr (Stack []) instructions
         match stackAfterInstructions with
         | Stack (x::xs) -> Some x
         | s -> None
-    
-    let instrs = [PUSH 2.0; PUSH 3.0; ADD; PUSH 3.0; SUB]
-    intpProg instrs
 
     (* 6.8.3
         Declare an F# function

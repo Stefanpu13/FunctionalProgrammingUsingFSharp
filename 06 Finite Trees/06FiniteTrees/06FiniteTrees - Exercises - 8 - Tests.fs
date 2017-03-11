@@ -8,19 +8,17 @@ open Exercises8.E
 type ``Test intpInstr``() =
 
     [<Test>]
-    member t.``If Stack is someStack and opertation is Push n, stack should be Stack [n::someStack]`` () = 
-        
-        intpInstr (Stack []) (PUSH 3.0) |> shouldEqual <| Stack [3.0]
-        
+    member t.``If Stack is someStack and opertation is Push n, stack should be Stack [n::someStack]`` () =         
+        intpInstr (Stack []) (PUSH 3.0) |> shouldEqual <| Stack [3.0]        
         intpInstr (Stack[3.0]) (PUSH 2.0) |> shouldEqual <| Stack [2.0; 3.0]
 
     [<Test>]
-    member t.``If Stack is empty and opertation is OneOperand f, stack should be Stack empty`` () = 
+    member t.``If Stack is empty and opertation is OneOperand f, stack should be InvalidStack`` () = 
         let stack = Stack []
-        intpInstr stack (SIN ) |> shouldEqual <| Stack []
-        intpInstr stack (COS) |> shouldEqual <| Stack []
-        intpInstr stack (LOG ) |> shouldEqual <| Stack []
-        intpInstr stack (EXP ) |> shouldEqual <| Stack []
+        intpInstr stack (SIN ) |> shouldEqual <| InvalidStack
+        intpInstr stack (COS) |> shouldEqual <| InvalidStack
+        intpInstr stack (LOG ) |> shouldEqual <| InvalidStack
+        intpInstr stack (EXP ) |> shouldEqual <| InvalidStack
 
     [<Test>]
     member t.``If Stack is n::someStack and opertation is OneOperand f, stack should be Stack (f n)::someStack`` () = 
@@ -31,17 +29,17 @@ type ``Test intpInstr``() =
         intpInstr stack (EXP ) |> shouldEqual <| Stack [exp 2.0; 3.0]
 
     [<Test>]
-    member t.``If Stack has less than two elems and opertation is TwoOperand f, stack should remain same`` () = 
+    member t.``If Stack has less than two elems and opertation is TwoOperand f, stack should be InvalidStack`` () = 
         let stack = Stack [2.0]
-        intpInstr stack (ADD ) |> shouldEqual <| stack
-        intpInstr stack (SUB ) |> shouldEqual <| stack
-        intpInstr stack (MULT ) |> shouldEqual <| stack
-        intpInstr stack (DIV ) |> shouldEqual <| stack
+        intpInstr stack (ADD ) |> shouldEqual <| InvalidStack
+        intpInstr stack (SUB ) |> shouldEqual <| InvalidStack
+        intpInstr stack (MULT ) |> shouldEqual <| InvalidStack
+        intpInstr stack (DIV ) |> shouldEqual <| InvalidStack
 
-        intpInstr (Stack []) (ADD ) |> shouldEqual <| Stack []
-        intpInstr (Stack []) (SUB ) |> shouldEqual <|  Stack []
-        intpInstr (Stack []) (MULT ) |> shouldEqual <|  Stack []
-        intpInstr (Stack []) (DIV ) |> shouldEqual <|  Stack []
+        intpInstr (Stack []) (ADD ) |> shouldEqual <| InvalidStack
+        intpInstr (Stack []) (SUB ) |> shouldEqual <|  InvalidStack
+        intpInstr (Stack []) (MULT ) |> shouldEqual <|  InvalidStack
+        intpInstr (Stack []) (DIV ) |> shouldEqual <|  InvalidStack
 
     [<Test>]
     member t.``If Stack is a:b::vals and opertation is TwoOperand f, stack should be Stack ((f b a)::vals) `` () = 
@@ -51,4 +49,46 @@ type ``Test intpInstr``() =
         intpInstr stack (MULT ) |> shouldEqual <| Stack [6.0]
         intpInstr stack (DIV ) |> shouldEqual <| Stack [1.5]
 
-  
+// Test intpProg
+[<TestFixture>]
+type ``Test intpProg``() =
+
+    [<Test>]
+    member t.``If instructions list is empty, result should be None`` () =         
+        intpProg [] |> shouldEqual <| None        
+    
+    [<Test>]
+    member t.``If instructions list is InvalidStack, result should be None`` () =         
+        intpProg [ADD] |> shouldEqual <| None
+        intpProg [PUSH 2.0; MULT] |> shouldEqual <| None
+        intpProg [LOG; PUSH 2.0] |> shouldEqual <| None
+        intpProg [SIN; PUSH 2.0; PUSH 3.0] |> shouldEqual <| None
+
+    [<Test>]
+    member t.``If instructions list is only PUSH ops, result should be last PUSH`` () =         
+        intpProg [PUSH 2.0;PUSH 3.0;] |> shouldEqual <| Some 3.0
+        intpProg [PUSH 2.0;PUSH 2.0;PUSH 4.0] |> shouldEqual <| Some 4.0
+        intpProg [PUSH 2.0;PUSH 2.0;PUSH 0.0; PUSH 4.0] |> shouldEqual <| Some 4.0
+        intpProg [PUSH 1.0] |> shouldEqual <| Some 1.0
+        
+    [<Test>]
+    member t.``If instructions list is one operand op, result should be result of op`` () =         
+        intpProg [PUSH 2.0;PUSH 3.0;SIN] |> shouldEqual <| Some (sin 3.0)
+        intpProg [PUSH 2.0;PUSH 4.0;COS] |> shouldEqual <| Some (cos 4.0)
+        intpProg [PUSH 2.0;PUSH 5.0;LOG] |> shouldEqual <| Some (log 5.0)
+        intpProg [PUSH 2.0;PUSH 6.0;EXP] |> shouldEqual <| Some (exp 6.0)
+
+    [<Test>]
+    member t.``If instructions list is simple two operand op, result should be result of op`` () =         
+        intpProg [PUSH 2.0;PUSH 2.0;ADD] |> shouldEqual <| Some 4.0
+        intpProg [PUSH 2.0;PUSH 2.0;SUB] |> shouldEqual <| Some 0.0
+        intpProg [PUSH 2.0;PUSH 2.0;MULT] |> shouldEqual <| Some 4.0
+        intpProg [PUSH 2.0;PUSH 2.0;DIV] |> shouldEqual <| Some 1.0
+
+    [<Test>]
+    member t.``If instructions list is complex op, result should be result of  all ops applied cpprectly`` () =         
+        intpProg [PUSH 2.0;PUSH 3.0;SIN; ADD;] |> shouldEqual <| Some ((sin 3.0) + 2.0)
+        intpProg [PUSH 2.0;PUSH 4.0;COS; SUB] |> shouldEqual <| Some (2.0 - (cos 4.0))
+        intpProg [ PUSH 3.0; PUSH 2.0;PUSH 5.0;SUB;PUSH 4.0;MULT; SUB] |> shouldEqual <| Some (3.0 - 4.0 * (2.0 - 5.0))  
+        intpProg [PUSH 2.0;PUSH 6.0;EXP; DIV] |> shouldEqual <| Some (2.0 / (exp 6.0))
+        //[5;2;3]
