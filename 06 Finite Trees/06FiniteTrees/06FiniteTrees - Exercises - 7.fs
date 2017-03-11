@@ -25,8 +25,8 @@ module E =
     *)
 
     let rec toNegationNormalForm = function
-        | Neg(Conj(a, b)) -> Disj(toNegationNormalForm <| Neg(a), toNegationNormalForm <| Neg(b))
-        | Neg(Disj(a, b)) -> Conj(toNegationNormalForm <| Neg(a), toNegationNormalForm <| Neg(b))
+        | Neg(Conj(a, b)) -> Disj(Neg(a) |> toNegationNormalForm, Neg(b) |> toNegationNormalForm)
+        | Neg(Disj(a, b)) -> Conj(Neg(a) |> toNegationNormalForm, Neg(b) |> toNegationNormalForm)
         | Neg(Neg(a)) -> toNegationNormalForm a
         | Neg(a) -> Neg(toNegationNormalForm a)
         | Conj(a, b)  -> Conj (toNegationNormalForm a, toNegationNormalForm b)
