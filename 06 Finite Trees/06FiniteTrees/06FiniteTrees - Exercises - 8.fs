@@ -34,31 +34,21 @@ module E =
             | COS | LOG | EXP | PUSH of float
 
     type Stack = Stack of float list | InvalidStack
-
-    type Operation = 
-    | TwoOperands of (float -> float -> float)
-    | OneOperand of (float -> float)
-    | PushOperand of float 
-
-    let operation = function
-        | ADD ->  TwoOperands (+)
-        | SUB ->  TwoOperands (-)
-        | MULT ->  TwoOperands (*)
-        | DIV ->  TwoOperands (/)
-        | SIN -> OneOperand sin
-        | COS -> OneOperand cos
-        | LOG -> OneOperand log
-        | EXP -> OneOperand exp
-        | PUSH num -> PushOperand num
-
+    
     let intpInstr stack instr =
         match stack with
         | Stack values ->
-            match (operation instr, values) with                        
-                | TwoOperands f, (a::b::vals) -> Stack ((f b a)::vals)
-                | OneOperand f, (v::vals) -> Stack ((f v)::vals)
-                | PushOperand v, _ ->  Stack (v::values)
-                | op, s ->  InvalidStack    
+            match instr, values with
+            | ADD, a::b::rest    ->Stack ((b + a)::rest)
+            | SUB, a::b::rest    ->Stack ((b - a)::rest)
+            | MULT, a::b::rest   ->Stack ((b * a)::rest)
+            | DIV, a::b::rest    ->Stack ((b / a)::rest)
+            | SIN, a::rest       ->Stack ((sin a)::rest)
+            | COS, a::rest       ->Stack ((cos a)::rest)
+            | LOG, a::rest       ->Stack ((log a)::rest)
+            | EXP, a::rest       -> Stack ((exp a)::rest)
+            | PUSH(value), stack -> Stack (value::stack)
+            | _ -> InvalidStack
         | InvalidStack -> InvalidStack
 
     (* 6.8.2
@@ -74,7 +64,7 @@ module E =
         let stackAfterInstructions = List.fold intpInstr (Stack []) instructions
         match stackAfterInstructions with
         | Stack (x::xs) -> Some x
-        | s -> None
+        | _ -> None
 
     (* 6.8.3
         Declare an F# function
@@ -84,6 +74,7 @@ module E =
         fe when X has the value x.
     *)
 
+    // it is already tail recursive why?
     let trans (expr, num) = 
         let rec trans expr instructions = 
             match expr with
@@ -99,19 +90,4 @@ module E =
             | Const n -> (PUSH n)::instructions
     
         trans expr []
-
-    let expr = 
-        Add(
-            Add(
-                Sub(
-                    Const 2.0, 
-                    X
-                ), 
-                Mul(
-                    X, 
-                    Add(Const 4.0, X)
-                )), 
-            X)
-
-    
-    (expr, 3.0) |> trans |> intpProg
+  

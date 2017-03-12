@@ -2,6 +2,7 @@ module Exercises8Tests
 open NUnit.Framework
 open FsUnitTyped
 open Exercises8.E
+open Exercises1Common.Types.Expression
 
 // Test intpInstr
 [<TestFixture>]
@@ -91,4 +92,32 @@ type ``Test intpProg``() =
         intpProg [PUSH 2.0;PUSH 4.0;COS; SUB] |> shouldEqual <| Some (2.0 - (cos 4.0))
         intpProg [ PUSH 3.0; PUSH 2.0;PUSH 5.0;SUB;PUSH 4.0;MULT; SUB] |> shouldEqual <| Some (3.0 - 4.0 * (2.0 - 5.0))  
         intpProg [PUSH 2.0;PUSH 6.0;EXP; DIV] |> shouldEqual <| Some (2.0 / (exp 6.0))
-        //[5;2;3]
+
+
+// Test trans
+(* 
+    Note: transforming a stack and interpretinga stack are two disting ops. 
+    The first transforms expression into stack, the second builds new stack that can be evaluated
+*)
+[<TestFixture>]
+type ``Test trans``() =
+
+    [<Test>]
+    member t.``If Fexpr is Const, result should be [PUSH 3.0]`` () =         
+        trans (Const 3.0, 2.0) |> shouldEqual <| [PUSH 3.0]     
+
+    [<Test>]
+    member t.``If Fexpr is X, result should be [PUSH X] and intpProg should be Some 2`` () =         
+        trans (X, 2.0) |> shouldEqual <| [PUSH 2.0]  
+        intpProg (trans (X, 2.0)) |> shouldEqual <| Some 2.0 
+
+    [<Test>]
+    member t.``If Fexpr Sub(Const 3.0, X) and X = 2.0, result should be [PUSH 3.0;PUSH 2.0; SUB]`` () =         
+        trans (Sub(Const 3.0, X), 2.0) |> shouldEqual <| [PUSH 3.0;PUSH 2.0; SUB] 
+        intpProg (trans (Sub(Const 3.0, X), 2.0)) |> shouldEqual <| Some 1.0
+    
+    [<Test>]
+    member t.``If Fexpr Mul(X, Sub(Sin(Const 3.0))) and X = 2.0, result should be [PUSH 2.0;PUSH 3.0;SIN;PUSH 2.0; SUB; MULT]`` () =         
+        trans (Mul(X, Sub(Sin(Const 3.0), X)), 2.0) |> shouldEqual <| [PUSH 2.0; PUSH 3.0; SIN; PUSH 2.0; SUB; MULT]
+        intpProg (trans (Mul(X, Sub(Sin(Const 3.0), X)), 2.0) ) |> shouldEqual <| Some (2.0 * (sin 3.0 - 2.0))
+   
