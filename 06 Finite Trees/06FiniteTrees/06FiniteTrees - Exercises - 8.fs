@@ -2,7 +2,7 @@ namespace Exercises8
 open Exercises1Common.Types.Expression
 module E = 
 
-    (*
+    (* 6.8
         We consider a simple calculator with instructions for addition, subtraction, multiplication and
         division of floats, and the functions: sin, cos, log and exp.
         The instruction set of the calculator is modelled by the following F# type:
@@ -89,5 +89,4 @@ module E =
             | X -> (PUSH num)::instructions
             | Const n -> (PUSH n)::instructions
     
-        trans expr []
-  
+        trans expr []  
