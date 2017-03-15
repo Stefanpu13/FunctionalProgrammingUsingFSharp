@@ -65,6 +65,8 @@
     <Compile Include="06FiniteTrees - Exercises - 8 - Tests.fs" />
     <Compile Include="06FiniteTrees - Exercises - 9.fs" />
     <Compile Include="06FiniteTrees - Exercises - 9 - Tests.fs" />
+    <Compile Include="06FiniteTrees - Exercises - 10.fs" />
+    <Compile Include="06FiniteTrees - Exercises - 10 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
