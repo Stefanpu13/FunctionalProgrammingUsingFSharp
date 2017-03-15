@@ -1,123 +1,118 @@
 module Exercises9Tests
+open System
 open NUnit.Framework
 open FsUnitTyped
-open Exercises8.E
+open Exercises9.E
 open Exercises1Common.Types.Expression
 
-// Test intpInstr
+let depWithTwoSubDeps = 
+    (Department (Name "base2", GrossIncome 2.0, 
+        [   
+            (Department (Name "base3", GrossIncome 3.0, []))
+            (Department (Name "base4", GrossIncome 4.0, []))
+        ]))
+let deepDeps = 
+    Department (Name "base1", GrossIncome 1.0, 
+        [
+            depWithTwoSubDeps
+            (Department (Name "base5", GrossIncome 5.0, [(Department (Name "base6", GrossIncome 6.0, []))]))
+            (Department (Name "base7", GrossIncome 7.0, []))
+        ])
+
+// Test allDepartments
 [<TestFixture>]
-type ``Test intpInstr``() =
+type ``Test allDepartments``() =
 
     [<Test>]
-    member t.``If Stack is someStack and opertation is Push n, stack should be Stack [n::someStack]`` () =         
-        intpInstr (Stack []) (PUSH 3.0) |> shouldEqual <| Stack [3.0]        
-        intpInstr (Stack[3.0]) (PUSH 2.0) |> shouldEqual <| Stack [2.0; 3.0]
+    member t.``If dep. has no subdeps, list should consist of single pair`` () =         
+        let deps = Department (Name "base1", GrossIncome 12.0, [])
+        allDepartments deps |> shouldEqual <| [(Name "base1", GrossIncome 12.0)] 
 
     [<Test>]
-    member t.``If Stack is empty and opertation is OneOperand f, stack should be InvalidStack`` () = 
-        let stack = Stack []
-        intpInstr stack (SIN ) |> shouldEqual <| InvalidStack
-        intpInstr stack (COS) |> shouldEqual <| InvalidStack
-        intpInstr stack (LOG ) |> shouldEqual <| InvalidStack
-        intpInstr stack (EXP ) |> shouldEqual <| InvalidStack
+    member t.``If dep. has one subdep, list should be two pairs, ending with the top dep`` () =         
+        let deps = Department (Name "base1", GrossIncome 12.0, [(Department (Name "base2", GrossIncome 10.0, []))])
+        allDepartments deps |> shouldEqual <| [(Name "base2", GrossIncome 10.0); (Name "base1", GrossIncome 12.0)] 
 
     [<Test>]
-    member t.``If Stack is n::someStack and opertation is OneOperand f, stack should be Stack (f n)::someStack`` () = 
-        let stack = Stack [2.0; 3.0]
-        intpInstr stack (SIN ) |> shouldEqual <| Stack [sin 2.0; 3.0]
-        intpInstr stack (COS) |> shouldEqual <| Stack [cos 2.0; 3.0]
-        intpInstr stack (LOG ) |> shouldEqual <| Stack [log 2.0; 3.0]
-        intpInstr stack (EXP ) |> shouldEqual <| Stack [exp 2.0; 3.0]
+    member t.``If dep. has subdeps, that have subdeps, list should have included top deps first `` () =         
 
-    [<Test>]
-    member t.``If Stack has less than two elems and opertation is TwoOperand f, stack should be InvalidStack`` () = 
-        let stack = Stack [2.0]
-        intpInstr stack (ADD ) |> shouldEqual <| InvalidStack
-        intpInstr stack (SUB ) |> shouldEqual <| InvalidStack
-        intpInstr stack (MULT ) |> shouldEqual <| InvalidStack
-        intpInstr stack (DIV ) |> shouldEqual <| InvalidStack
+        allDepartments deepDeps |> shouldEqual <| [ (Name "base7", GrossIncome 7.0); (Name "base6", GrossIncome 6.0);
+                                                    (Name "base5", GrossIncome 5.0); (Name "base4", GrossIncome 4.0);
+                                                    (Name "base3", GrossIncome 3.0); (Name "base2", GrossIncome 2.0);
+                                                    (Name "base1", GrossIncome 1.0)]
 
-        intpInstr (Stack []) (ADD ) |> shouldEqual <| InvalidStack
-        intpInstr (Stack []) (SUB ) |> shouldEqual <|  InvalidStack
-        intpInstr (Stack []) (MULT ) |> shouldEqual <|  InvalidStack
-        intpInstr (Stack []) (DIV ) |> shouldEqual <|  InvalidStack
-
-    [<Test>]
-    member t.``If Stack is a:b::vals and opertation is TwoOperand f, stack should be Stack ((f b a)::vals) `` () = 
-        let stack = Stack [2.0; 3.0]
-        intpInstr stack (ADD ) |> shouldEqual <| Stack [5.0]
-        intpInstr stack (SUB ) |> shouldEqual <| Stack [1.0]
-        intpInstr stack (MULT ) |> shouldEqual <| Stack [6.0]
-        intpInstr stack (DIV ) |> shouldEqual <| Stack [1.5]
-
-// Test intpProg
+// Test totalIncome
 [<TestFixture>]
-type ``Test intpProg``() =
+type ``Test totalIncome``() =
 
     [<Test>]
-    member t.``If instructions list is empty, result should be None`` () =         
-        intpProg [] |> shouldEqual <| None        
+    member t.``If dep. has no subdeps and Income 3, totalIncome should be 3`` () =         
+        let deps = Department (Name "base1", GrossIncome 3.0, [])
+        totalIncome deps |> shouldEqual <| GrossIncome 3.0
     
     [<Test>]
-    member t.``If instructions list is InvalidStack, result should be None`` () =         
-        intpProg [ADD] |> shouldEqual <| None
-        intpProg [PUSH 2.0; MULT] |> shouldEqual <| None
-        intpProg [LOG; PUSH 2.0] |> shouldEqual <| None
-        intpProg [SIN; PUSH 2.0; PUSH 3.0] |> shouldEqual <| None
+    member t.``If dep. has two subdeps and Income 2, and two subdeps have income 3 and 4, totalIncome should be 9`` () =
+        totalIncome depWithTwoSubDeps |> shouldEqual <| GrossIncome 9.0
 
     [<Test>]
-    member t.``If instructions list is only PUSH ops, result should be last PUSH`` () =         
-        intpProg [PUSH 2.0;PUSH 3.0;] |> shouldEqual <| Some 3.0
-        intpProg [PUSH 2.0;PUSH 2.0;PUSH 4.0] |> shouldEqual <| Some 4.0
-        intpProg [PUSH 2.0;PUSH 2.0;PUSH 0.0; PUSH 4.0] |> shouldEqual <| Some 4.0
-        intpProg [PUSH 1.0] |> shouldEqual <| Some 1.0
+    member t.``If dep. is nested, totalIncome should be sum of all subdeps`` () =
+        totalIncome deepDeps |> shouldEqual <| GrossIncome (List.sum [1.0..7.0])
+
+
+// Test allDepartmentsTotalIncome
+[<TestFixture>]
+type ``Test allDepartmentsTotalIncome``() =
+
+    [<Test>]
+    member t.``If dep. has no subdeps and Income 3, list must be 1 pair`` () =         
+        let deps = Department (Name "base1", GrossIncome 3.0, [])
+        allDepartmentsTotalIncome deps |> shouldEqual <| [(Name "base1", GrossIncome 3.0)]
         
     [<Test>]
-    member t.``If instructions list is one operand op, result should be result of op`` () =         
-        intpProg [PUSH 2.0;PUSH 3.0;SIN] |> shouldEqual <| Some (sin 3.0)
-        intpProg [PUSH 2.0;PUSH 4.0;COS] |> shouldEqual <| Some (cos 4.0)
-        intpProg [PUSH 2.0;PUSH 5.0;LOG] |> shouldEqual <| Some (log 5.0)
-        intpProg [PUSH 2.0;PUSH 6.0;EXP] |> shouldEqual <| Some (exp 6.0)
+    member t.``If dep. has two subdeps and Income 2, and two subdeps have income 3 and 4, list must be 3 pairs`` () =                 
+        allDepartmentsTotalIncome depWithTwoSubDeps |> shouldEqual <| [ (Name "base2", GrossIncome 9.0); 
+                                                                        (Name "base4", GrossIncome 4.0);
+                                                                        (Name "base3", GrossIncome 3.0)]
 
     [<Test>]
-    member t.``If instructions list is simple two operand op, result should be result of op`` () =         
-        intpProg [PUSH 2.0;PUSH 2.0;ADD] |> shouldEqual <| Some 4.0
-        intpProg [PUSH 2.0;PUSH 2.0;SUB] |> shouldEqual <| Some 0.0
-        intpProg [PUSH 2.0;PUSH 2.0;MULT] |> shouldEqual <| Some 4.0
-        intpProg [PUSH 2.0;PUSH 2.0;DIV] |> shouldEqual <| Some 1.0
+    member t.``If dep. is nested, list must contain all subdeps as pairs`` () =                 
+        allDepartmentsTotalIncome deepDeps |> shouldEqual <| [  (Name "base1", GrossIncome 28.0);
+                                                                (Name "base7", GrossIncome 7.0);
+                                                                (Name "base5", GrossIncome 11.0); 
+                                                                (Name "base6", GrossIncome 6.0);
+                                                                (Name "base2", GrossIncome 9.0); 
+                                                                (Name "base4", GrossIncome 4.0);
+                                                                (Name "base3", GrossIncome 3.0)]
 
-    [<Test>]
-    member t.``If instructions list is complex op, result should be result of  all ops applied cpprectly`` () =         
-        intpProg [PUSH 2.0;PUSH 3.0;SIN; ADD;] |> shouldEqual <| Some ((sin 3.0) + 2.0)
-        intpProg [PUSH 2.0;PUSH 4.0;COS; SUB] |> shouldEqual <| Some (2.0 - (cos 4.0))
-        intpProg [ PUSH 3.0; PUSH 2.0;PUSH 5.0;SUB;PUSH 4.0;MULT; SUB] |> shouldEqual <| Some (3.0 - 4.0 * (2.0 - 5.0))  
-        intpProg [PUSH 2.0;PUSH 6.0;EXP; DIV] |> shouldEqual <| Some (2.0 / (exp 6.0))
-
-
-// Test trans
-(* 
-    Note: transforming a stack and interpretinga stack are two disting ops. 
-    The first transforms expression into stack, the second builds new stack that can be evaluated
-*)
+// Test format
 [<TestFixture>]
-type ``Test trans``() =
+type ``Test format``() =
 
     [<Test>]
-    member t.``If Fexpr is Const, result should be [PUSH 3.0]`` () =         
-        trans (Const 3.0, 2.0) |> shouldEqual <| [PUSH 3.0]     
-
+    member t.``If dep. has no subdeps and name "base1", format must be "base1"`` () =         
+        let deps = Department (Name "base1", GrossIncome 3.0, [])
+        format deps |> shouldEqual <| 
+        Environment.NewLine +
+        "base1" +
+        Environment.NewLine
+        
     [<Test>]
-    member t.``If Fexpr is X, result should be [PUSH X] and intpProg should be Some 2`` () =         
-        trans (X, 2.0) |> shouldEqual <| [PUSH 2.0]  
-        intpProg (trans (X, 2.0)) |> shouldEqual <| Some 2.0 
-
+    member t.``If dep. has name "base2" and two subdeps with names "base3"and "base4", subdeps must be intendent two spaces and each on new line`` () =                 
+        format depWithTwoSubDeps |> shouldEqual <|  Environment.NewLine +
+                                                    "base2" + Environment.NewLine +
+                                                    "  base3" + Environment.NewLine +
+                                                    "  base4" + Environment.NewLine 
+        
     [<Test>]
-    member t.``If Fexpr Sub(Const 3.0, X) and X = 2.0, result should be [PUSH 3.0;PUSH 2.0; SUB]`` () =         
-        trans (Sub(Const 3.0, X), 2.0) |> shouldEqual <| [PUSH 3.0;PUSH 2.0; SUB] 
-        intpProg (trans (Sub(Const 3.0, X), 2.0)) |> shouldEqual <| Some 1.0
+    member t.``If dep. is nested, subdeps must be intendent two spaces and each on new line`` () =                 
+        format deepDeps |> shouldEqual <|   Environment.NewLine +
+                                            "base1" + Environment.NewLine +
+                                            "  base2" + Environment.NewLine +
+                                            "    base3" + Environment.NewLine +
+                                            "    base4" + Environment.NewLine +
+                                            "  base5" + Environment.NewLine + 
+                                            "    base6" + Environment.NewLine + 
+                                            "  base7" + Environment.NewLine
+        
+
     
-    [<Test>]
-    member t.``If Fexpr Mul(X, Sub(Sin(Const 3.0))) and X = 2.0, result should be [PUSH 2.0;PUSH 3.0;SIN;PUSH 2.0; SUB; MULT]`` () =         
-        trans (Mul(X, Sub(Sin(Const 3.0), X)), 2.0) |> shouldEqual <| [PUSH 2.0; PUSH 3.0; SIN; PUSH 2.0; SUB; MULT]
-        intpProg (trans (Mul(X, Sub(Sin(Const 3.0), X)), 2.0) ) |> shouldEqual <| Some (2.0 * (sin 3.0 - 2.0))
-   
