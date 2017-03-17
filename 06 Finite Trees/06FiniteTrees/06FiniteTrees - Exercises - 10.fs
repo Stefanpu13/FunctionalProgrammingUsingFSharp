@@ -22,14 +22,14 @@ module E =
         | And of BooleanExpression * BooleanExpression
         | Or of BooleanExpression * BooleanExpression
         | Not of BooleanExpression
-        | Comparison of ComparisonOperator * ExprTree * ExprTree
+        // | Comparison of ComparisonOperator * ExprTree * ExprTree
         | BooleanConst of bool    
-    and ComparisonOperator = 
-        | EQ
-        | GT
-        | GTE
-        | ST
-        | STE
+    // and ComparisonOperator = 
+        | EQ of ExprTree * ExprTree
+        | GT of ExprTree * ExprTree
+        | GTE of ExprTree * ExprTree
+        | ST  of ExprTree * ExprTree
+        | STE of ExprTree * ExprTree
 
         // a*3 > b + 5 && c 
 
@@ -63,11 +63,11 @@ module E =
         | comp -> evalComp comp env
     and evalComp comp env = 
         match comp with
-        | Comparison (EQ, t1, t2) -> (eval t1 env) = (eval t2 env)
-        | Comparison (GT, t1, t2) -> (eval t1 env) > (eval t2 env)
-        | Comparison (GTE, t1, t2) -> (eval t1 env) >= (eval t2 env)
-        | Comparison (ST, t1, t2) -> (eval t1 env) < (eval t2 env)
-        | Comparison (STE, t1, t2) -> (eval t1 env) <= (eval t2 env)
+        | EQ (t1, t2) -> (eval t1 env) = (eval t2 env)
+        | GT (t1, t2) -> (eval t1 env) > (eval t2 env)
+        | GTE (t1, t2) -> (eval t1 env) >= (eval t2 env)
+        | ST (t1, t2) -> (eval t1 env) < (eval t2 env)
+        | STE (t1, t2) -> (eval t1 env) <= (eval t2 env)
         | be -> evalBoolExp be env
 
 
@@ -76,8 +76,7 @@ module E =
     let et2 =
         Prod(Ident "a", If (            
                 And(               
-                       Comparison( 
-                            GT, 
+                       GT(                            
                             Sum(Const 3, Const 4), 
                             Prod( Ident "b", Ident "a")),
                     BooleanConst true), 

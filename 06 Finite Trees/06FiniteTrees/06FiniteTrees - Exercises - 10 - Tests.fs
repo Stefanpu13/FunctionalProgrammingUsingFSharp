@@ -2,117 +2,90 @@ module Exercises10Tests
 open System
 open NUnit.Framework
 open FsUnitTyped
-open Exercises9.E
-open Exercises1Common.Types.Expression
+open Exercises10.E
 
-let depWithTwoSubDeps = 
-    (Department (Name "base2", GrossIncome 2.0, 
-        [   
-            (Department (Name "base3", GrossIncome 3.0, []))
-            (Department (Name "base4", GrossIncome 4.0, []))
-        ]))
-let deepDeps = 
-    Department (Name "base1", GrossIncome 1.0, 
-        [
-            depWithTwoSubDeps
-            (Department (Name "base5", GrossIncome 5.0, [(Department (Name "base6", GrossIncome 6.0, []))]))
-            (Department (Name "base7", GrossIncome 7.0, []))
-        ])
 
-// Test allDepartments
+// Test IfThenElse
 [<TestFixture>]
-type ``Test allDepartments``() =
+type ``Test IfThenElse``() =
 
     [<Test>]
-    member t.``If dep. has no subdeps, list should consist of single pair`` () =         
-        let deps = Department (Name "base1", GrossIncome 12.0, [])
-        allDepartments deps |> shouldEqual <| [(Name "base1", GrossIncome 12.0)] 
+    member t.``If "If" expression is only constants - If true then 5 else 6 - ,result should be 5`` () =         
+        let expr = If (BooleanConst true, Const 5, Const 6)
+
+        eval expr Map.empty |> shouldEqual <| 5
 
     [<Test>]
-    member t.``If dep. has one subdep, list should be two pairs, ending with the top dep`` () =         
-        let deps = Department (Name "base1", GrossIncome 12.0, [(Department (Name "base2", GrossIncome 10.0, []))])
-        allDepartments deps |> shouldEqual <| [(Name "base2", GrossIncome 10.0); (Name "base1", GrossIncome 12.0)] 
+    member t.``If "If" expression is only constants - If false then 5 else 6 - , result should be 6`` () =         
+        let expr = If (BooleanConst false, Const 5, Const 6)
 
-    [<Test>]
-    member t.``If dep. has subdeps, that have subdeps, list should have included top deps first `` () =         
+        eval expr Map.empty |> shouldEqual <| 6
 
-        allDepartments deepDeps |> shouldEqual <| [ (Name "base7", GrossIncome 7.0); (Name "base6", GrossIncome 6.0);
-                                                    (Name "base5", GrossIncome 5.0); (Name "base4", GrossIncome 4.0);
-                                                    (Name "base3", GrossIncome 3.0); (Name "base2", GrossIncome 2.0);
-                                                    (Name "base1", GrossIncome 1.0)]
-
-// Test totalIncome
-[<TestFixture>]
-type ``Test totalIncome``() =
-
-    [<Test>]
-    member t.``If dep. has no subdeps and Income 3, totalIncome should be 3`` () =         
-        let deps = Department (Name "base1", GrossIncome 3.0, [])
-        totalIncome deps |> shouldEqual <| GrossIncome 3.0
-    
-    [<Test>]
-    member t.``If dep. has two subdeps and Income 2, and two subdeps have income 3 and 4, totalIncome should be 9`` () =
-        totalIncome depWithTwoSubDeps |> shouldEqual <| GrossIncome 9.0
-
-    [<Test>]
-    member t.``If dep. is nested, totalIncome should be sum of all subdeps`` () =
-        totalIncome deepDeps |> shouldEqual <| GrossIncome (List.sum [1.0..7.0])
-
-
-// Test allDepartmentsTotalIncome
-[<TestFixture>]
-type ``Test allDepartmentsTotalIncome``() =
-
-    [<Test>]
-    member t.``If dep. has no subdeps and Income 3, list must be 1 pair`` () =         
-        let deps = Department (Name "base1", GrossIncome 3.0, [])
-        allDepartmentsTotalIncome deps |> shouldEqual <| [(Name "base1", GrossIncome 3.0)]
         
     [<Test>]
-    member t.``If dep. has two subdeps and Income 2, and two subdeps have income 3 and 4, list must be 3 pairs`` () =                 
-        allDepartmentsTotalIncome depWithTwoSubDeps |> shouldEqual <| [ (Name "base2", GrossIncome 9.0); 
-                                                                        (Name "base4", GrossIncome 4.0);
-                                                                        (Name "base3", GrossIncome 3.0)]
+    member t.``If boolean expression is comparison of constants - If (5 < 6) then 5 else 6,result should be 5`` () =         
+        let expr = If (ST(Const 5, Const 6), Const 5, Const 6)
+
+        eval expr Map.empty |> shouldEqual <| 5
 
     [<Test>]
-    member t.``If dep. is nested, list must contain all subdeps as pairs`` () =                 
-        allDepartmentsTotalIncome deepDeps |> shouldEqual <| [  (Name "base1", GrossIncome 28.0);
-                                                                (Name "base7", GrossIncome 7.0);
-                                                                (Name "base5", GrossIncome 11.0); 
-                                                                (Name "base6", GrossIncome 6.0);
-                                                                (Name "base2", GrossIncome 9.0); 
-                                                                (Name "base4", GrossIncome 4.0);
-                                                                (Name "base3", GrossIncome 3.0)]
-
-// Test format
-[<TestFixture>]
-type ``Test format``() =
+    member t.``If boolean expression is comparison of expressions - If (5 * a > 6 * a) then 5 else 6, and a > 0, result should be 6`` () =         
+        let expr = If (GT(Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")), Const 5, Const 6)
+        let env = Map.add "a" 2 Map.empty
+        eval expr env |> shouldEqual <| 6
 
     [<Test>]
-    member t.``If dep. has no subdeps and name "base1", format must be "base1"`` () =         
-        let deps = Department (Name "base1", GrossIncome 3.0, [])
-        format deps |> shouldEqual <| 
-        Environment.NewLine +
-        "base1" +
-        Environment.NewLine
-        
-    [<Test>]
-    member t.``If dep. has name "base2" and two subdeps with names "base3"and "base4", subdeps must be intendent two spaces and each on new line`` () =                 
-        format depWithTwoSubDeps |> shouldEqual <|  Environment.NewLine +
-                                                    "base2" + Environment.NewLine +
-                                                    "  base3" + Environment.NewLine +
-                                                    "  base4" + Environment.NewLine 
-        
-    [<Test>]
-    member t.``If dep. is nested, subdeps must be intendent two spaces and each on new line`` () =                 
-        format deepDeps |> shouldEqual <|   Environment.NewLine +
-                                            "base1" + Environment.NewLine +
-                                            "  base2" + Environment.NewLine +
-                                            "    base3" + Environment.NewLine +
-                                            "    base4" + Environment.NewLine +
-                                            "  base5" + Environment.NewLine + 
-                                            "    base6" + Environment.NewLine + 
-                                            "  base7" + Environment.NewLine
-        
+    member t.``If boolean expression is complex - If (5 * a > 6 * a && a < b) then 5 else 6, and a > 0, result should be 6`` () =         
+        let expr = 
+            If (
+                And( 
+                    GTE(Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
+                    ST(Ident "a", Ident "b")), 
+                Const 5, Const 6)
+        let env = Map.add "a" 2 Map.empty
+        let env1 = Map.add "b" 3 env
 
-    
+        eval expr env1 |> shouldEqual <| 6
+
+    [<Test>]
+    member t.``If "If" expression is complex, and bool expression is true - If (5 * a > 6 * a || a < b) then a-b else a+b, result should be a-b`` () =         
+        let expr =
+            If(
+                Or ( 
+                    GTE (Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
+                    ST(Ident "a", Ident "b")), 
+                Diff (Ident "a", Ident "b"),
+                Sum (Ident "a", Ident "b"))
+
+        let env = Map.add "a" 2 Map.empty
+        let env1 = Map.add "b" 3 env
+
+        eval expr env1 |> shouldEqual <| (eval (Diff(Ident "a", Ident "b")) env1)
+
+    [<Test>]
+    member t.``If "If" expression is complex, and part of complex expression, complex expression should be evaluated`` () =         
+        let ifExpr =
+            If(
+                Or ( 
+                    GTE (Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
+                    ST(Ident "a", Ident "b")), 
+                Diff (Ident "a", Ident "b"),
+                Sum (Ident "a", Ident "b"))
+        let expr = 
+            Prod(
+                If(
+                    Not(STE(Const 3, Ident "b")),
+                    Ident "c", 
+                    Sum (Ident "c", Const 4)),
+                ifExpr)            
+
+        let env = 
+            Map.empty 
+                |> Map.add "a" 2 
+                |> Map.add "b" 3  
+                |> Map.add "c" 4
+
+        let realExpr = 
+            (if not (3 <= 3) then 4 else 4 + 4) * (if 5 * 2 > 6 * 2 || 2 < 3 then 2 - 3 else 2 + 3)
+
+        eval expr env |> shouldEqual <| realExpr
