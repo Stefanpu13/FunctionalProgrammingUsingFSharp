@@ -22,21 +22,12 @@ module E =
         | And of BooleanExpression * BooleanExpression
         | Or of BooleanExpression * BooleanExpression
         | Not of BooleanExpression
-        // | Comparison of ComparisonOperator * ExprTree * ExprTree
-        | BooleanConst of bool    
-    // and ComparisonOperator = 
+        | BooleanConst of bool 
         | EQ of ExprTree * ExprTree
         | GT of ExprTree * ExprTree
         | GTE of ExprTree * ExprTree
         | ST  of ExprTree * ExprTree
         | STE of ExprTree * ExprTree
-
-        // a*3 > b + 5 && c 
-
-    let et =
-        Prod(Ident "a",
-            Sum(Minus (Const 3),
-                Let("x", Const 5, Sum(Ident "x", Ident "a"))))
 
     let rec eval t env =
         match t with
@@ -69,21 +60,4 @@ module E =
         | ST (t1, t2) -> (eval t1 env) < (eval t2 env)
         | STE (t1, t2) -> (eval t1 env) <= (eval t2 env)
         | be -> evalBoolExp be env
-
-
-    let env = Map.add "a" -7 Map.empty
-    let env1 = Map.add "b" 7 env
-    let et2 =
-        Prod(Ident "a", If (            
-                And(               
-                       GT(                            
-                            Sum(Const 3, Const 4), 
-                            Prod( Ident "b", Ident "a")),
-                    BooleanConst true), 
-                Diff(Const 6, Ident "a"),
-                Diff(Const 6, Ident "b")))
-    
-    // a = -7; b= 7
-    //  a * (if (3+4) > (a*b) then (6-a) else (6-b))
-
-    eval et2 env1
+        
