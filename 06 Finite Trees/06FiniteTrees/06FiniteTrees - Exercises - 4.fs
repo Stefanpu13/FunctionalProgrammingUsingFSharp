@@ -10,9 +10,11 @@ module E =
         ls is the set of values occurring the leaves of t and ns is the set of values occurring the nodes
         of t
     *)
+
     type BinTree<'a,'b> =
         | Leaf of 'a
         | Node of BinTree<'a,'b> * 'b * BinTree<'a,'b>
+
 
     (* 6.4.1
         1. leafVals: BinTree<’a,’b> -> Set<’a> such that leafVals t is the set of values

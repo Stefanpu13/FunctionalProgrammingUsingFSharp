@@ -12,7 +12,7 @@ module Types =
         | Cos of Fexpr
         | Log of Fexpr
         | Exp of Fexpr
-
+        
 
 module Utils = 
     open Types.Expression
