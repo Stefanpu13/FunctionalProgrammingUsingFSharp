@@ -42,13 +42,13 @@ module E =
     *)
     
     (* 6.12 
-        Declare the functions depthFirstFold and breadthFirstFoldBack on list trees, cf.
+        Declare the functions depthFirstFoldBack and breadthFirstFold on list trees, cf.
         Section 6.6.
     *)
-    let rec depthFirstFoldBack f (Node(x,ts)) e =
-        List.foldBack (depthFirstFoldBack f) ts (f x e)
+    let rec depthFirstFoldBack f (Node(x,ts)) e = 
+        f x (List.foldBack (depthFirstFoldBack f) ts e)
 
-    // depthFirstFoldBack (fun x a -> x::a) t1 []
+    depthFirstFoldBack (fun x a -> x::a) t1 []
 
     let rec breadthFirstFoldBackList f ts e =
         match ts with
@@ -65,7 +65,7 @@ module E =
         match ts with
         | [] -> e
         | (Node(x,ts))::rest -> 
-        f (breadthFirstFoldList f e (rest@ts)) x
+            breadthFirstFoldList f (f e x) (rest@ts)
     let breadthFirstFold f e t = breadthFirstFoldList f e [t]
 
     breadthFirstFold (fun a x  -> x::a) [] t1 
