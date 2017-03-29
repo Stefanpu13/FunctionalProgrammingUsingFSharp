@@ -17,8 +17,7 @@ module E =
 
     let rec depthFirstFold f e (Node(x,ts)) =
         List.fold (depthFirstFold f) (f e x) ts
-
-    depthFirstFold (fun a x -> x::a) [] t1
+    
     (* depthFirstFold (fun a x -> x::a) [] t1
 
                     1
@@ -46,9 +45,7 @@ module E =
         Section 6.6.
     *)
     let rec depthFirstFoldBack f (Node(x,ts)) e = 
-        f x (List.foldBack (depthFirstFoldBack f) ts e)
-
-    depthFirstFoldBack (fun x a -> x::a) t1 []
+        f x (List.foldBack (depthFirstFoldBack f) ts e)    
 
     let rec breadthFirstFoldBackList f ts e =
         match ts with
@@ -56,9 +53,7 @@ module E =
         | (Node(x,ts))::rest ->
         f x (breadthFirstFoldBackList f (rest@ts) e)
 
-    let breadthFirstFoldBack f t e = breadthFirstFoldBackList f [t] e
-
-    breadthFirstFoldBack (fun x a  -> x::a) t1 [] 
+    let breadthFirstFoldBack f t e = breadthFirstFoldBackList f [t] e   
 
     // fold : folder:('State -> 'T -> 'State) -> state:'State -> list:'T list -> 'State
     let rec breadthFirstFoldList f e ts=
@@ -68,4 +63,4 @@ module E =
             breadthFirstFoldList f (f e x) (rest@ts)
     let breadthFirstFold f e t = breadthFirstFoldList f e [t]
 
-    breadthFirstFold (fun a x  -> x::a) [] t1 
+    
