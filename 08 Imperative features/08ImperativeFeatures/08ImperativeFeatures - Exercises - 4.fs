@@ -9,23 +9,14 @@ module E =
     let add x y = x + y
     
     type T = { mutable link : T; data : int }
-    
-    let ts = [
-        {link=Unchecked.defaultof<T>; data=1};
-        {link=Unchecked.defaultof<T>; data=2};
-        {link=Unchecked.defaultof<T>; data=3};
-        {link=Unchecked.defaultof<T>; data=4};
-        {link=Unchecked.defaultof<T>; data=5};
-    ]
+    let defaultT = Unchecked.defaultof<T>    
 
     let insert link chain = 
         link.link <- chain
         link 
     let createChain ts = 
-        List.foldBack insert ts Unchecked.defaultof<T>
-
-    createChain ts
-
+        List.foldBack insert ts defaultT
+    
     let createCircle ts = 
         let rec createCircle firstLink previousLink ts =
             match ts with
@@ -34,19 +25,19 @@ module E =
                 lastLink.link <- firstLink
                 previousLink.link <- lastLink                 
                 createCircle firstLink lastLink []
-            | x::rest ->  
-                previousLink.link <- x
-                createCircle firstLink x rest
+            | link::rest ->  
+                previousLink.link <- link
+                createCircle firstLink link rest
         
         match ts with
-        | [] -> Unchecked.defaultof<T>
+        | [] -> defaultT
         | x::rest -> createCircle x x rest
   
-    let enumCircle links =         
-        let rec enumCircle c t = 
-            if c < 20 
-            then printfn "%A" t.data; enumCircle (c+1) t.link
-            else printfn "%A" t.data;
-        enumCircle 0 links
+    // let enumCircle links =         
+    //     let rec enumCircle c t = 
+    //         if c < 20 
+    //         then printfn "%A" t.data; enumCircle (c+1) t.link
+    //         else printfn "%A" t.data;
+    //     enumCircle 0 links
     
-    enumCircle (createCircle ts)
+    // enumCircle (createCircle ts)
