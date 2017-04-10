@@ -43,8 +43,8 @@
     <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="08ImperativeFeatures - Exercises - 1.fs" />
-    <Compile Include="08ImperativeFeatures - Exercises - 1 - Tests.fs" />    
+    <Compile Include="08ImperativeFeatures - Exercises - 4.fs" />
+    <Compile Include="08ImperativeFeatures - Exercises - 4 - Tests.fs" />    
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
