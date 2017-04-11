@@ -20,8 +20,8 @@ module E =
             | Leaf -> (Leaf, Leaf)
             | Node(Leaf, x, rightTree) -> (rightTree, Node(Leaf, x, Leaf))
             | Node(leftTree, v, rightTree) -> 
-                let (treeAfterDeletion, deletedElement) = deleteSmallestElement leftTree
-                (Node (treeAfterDeletion, v, rightTree), deletedElement)
+                let (leftTreeAfterDeletion, deletedElement) = deleteSmallestElement leftTree
+                (Node (leftTreeAfterDeletion, v, rightTree), deletedElement)
         
         deleteSmallestElement tree
     let rec delete x tree =
