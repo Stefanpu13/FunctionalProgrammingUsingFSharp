@@ -20,7 +20,10 @@ module E =
     let createCircle ts = 
         let rec createCircle firstLink previousLink ts =
             match ts with
-            | [] -> firstLink
+            | [] -> 
+                // firstLink.link <- previousLink
+                // previousLink.link <-firstLink
+                firstLink
             | [lastLink] ->
                 lastLink.link <- firstLink
                 previousLink.link <- lastLink                 
@@ -31,13 +34,7 @@ module E =
         
         match ts with
         | [] -> defaultT
-        | x::rest -> createCircle x x rest
-  
-    // let enumCircle links =         
-    //     let rec enumCircle c t = 
-    //         if c < 20 
-    //         then printfn "%A" t.data; enumCircle (c+1) t.link
-    //         else printfn "%A" t.data;
-    //     enumCircle 0 links
-    
-    // enumCircle (createCircle ts)
+        | [x] -> 
+            x.link <- x 
+            x
+        | x::rest -> createCircle x x rest 
