@@ -1,4 +1,4 @@
-namespace Exercises1
+namespace Exercises4
 module E = 
     (* 8.4
         Declare null to denote the default value of the record type:
@@ -6,8 +6,7 @@ module E =
         Declare some other values of type t and use assignment to build chains and circles of values of
         type t. Declare a function to insert an element in the front of a chain of values of type t.
     *)
-    let add x y = x + y
-    
+
     type T = { mutable link : T; data : int }
     let defaultT = Unchecked.defaultof<T>    
 
@@ -21,8 +20,6 @@ module E =
         let rec createCircle firstLink previousLink ts =
             match ts with
             | [] -> 
-                // firstLink.link <- previousLink
-                // previousLink.link <-firstLink
                 firstLink
             | [lastLink] ->
                 lastLink.link <- firstLink

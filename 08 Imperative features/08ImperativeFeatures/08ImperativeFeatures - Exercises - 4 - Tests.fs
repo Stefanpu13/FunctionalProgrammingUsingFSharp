@@ -1,7 +1,7 @@
 module Exercises1Tests
 open NUnit.Framework
 open FsUnitTyped
-open Exercises1.E
+open Exercises4.E
 
 let getLinksTree ()= 
     [
@@ -88,9 +88,3 @@ type ``Test createCircle function``() =
 
         iterCircle (fun step link -> link |> shouldEqual ts.[step % 3]) 10 circle |> ignore
         
-        
-        
-
-
-        
-
