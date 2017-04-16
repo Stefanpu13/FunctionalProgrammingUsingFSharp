@@ -46,7 +46,11 @@
     <Compile Include="08ImperativeFeatures - Exercises - 4.fs" />
     <Compile Include="08ImperativeFeatures - Exercises - 4 - Tests.fs" /> 
     <Compile Include="08ImperativeFeatures - Exercises - 5.fs" />
-    <Compile Include="08ImperativeFeatures - Exercises - 5 - Tests.fs" />    
+    <Compile Include="08ImperativeFeatures - Exercises - 5 - Tests.fs" />
+    <Compile Include="08ImperativeFeatures - Exercises - 6.fs" />
+    <Compile Include="08ImperativeFeatures - Exercises - 6 - Tests.fs" />
+    <Compile Include="08ImperativeFeatures - Exercises - 7.fs" />
+    <Compile Include="08ImperativeFeatures - Exercises - 7 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

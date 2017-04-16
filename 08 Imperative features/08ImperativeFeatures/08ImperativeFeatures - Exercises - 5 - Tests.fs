@@ -12,7 +12,7 @@ type ``Test imperative gcd function``() =
 
     [<Test>]
     member t.``recursive and imperative gcd function should produce the same results"`` () = 
-        let ``recursive and imperative gcd are same`` i = 
+        let ``recursive and imperative gcd are same`` _ = 
             let m = rand.Next(100)
             let n = rand.Next(100)
 

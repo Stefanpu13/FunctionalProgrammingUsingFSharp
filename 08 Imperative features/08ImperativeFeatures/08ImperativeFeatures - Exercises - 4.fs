@@ -16,20 +16,20 @@ module E =
     let createChain ts = 
         List.foldBack insert ts defaultT
     
-    let createCircle ts = 
-        let rec createCircle firstLink previousLink ts =
-            match ts with
+    let createCircle links = 
+        let rec createCircle firstLink previousLink links =
+            match links with
             | [] -> 
                 firstLink
             | [lastLink] ->
                 lastLink.link <- firstLink
-                previousLink.link <- lastLink                 
-                createCircle firstLink lastLink []
+                previousLink.link <- lastLink        
+                firstLink
             | link::rest ->  
                 previousLink.link <- link
                 createCircle firstLink link rest
         
-        match ts with
+        match links with
         | [] -> defaultT
         | [x] -> 
             x.link <- x 

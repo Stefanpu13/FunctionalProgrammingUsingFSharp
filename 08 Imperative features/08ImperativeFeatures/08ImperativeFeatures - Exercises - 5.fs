@@ -1,6 +1,6 @@
 namespace Exercises5
 module E = 
-    (* 8.4
+    (* 8.5
         Give a declaration of the gcd function using a while loop instead of recursion (cf. Section
         1.8).
     *)
