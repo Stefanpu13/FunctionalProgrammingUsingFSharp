@@ -1,4 +1,4 @@
-module Exercises1Tests
+module Exercises4Tests
 open NUnit.Framework
 open FsUnitTyped
 open Exercises4.E
