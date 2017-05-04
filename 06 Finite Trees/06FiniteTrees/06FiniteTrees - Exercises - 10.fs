@@ -26,8 +26,8 @@ module E =
         | EQ of ExprTree * ExprTree
         | GT of ExprTree * ExprTree
         | GTE of ExprTree * ExprTree
-        | ST  of ExprTree * ExprTree
-        | STE of ExprTree * ExprTree
+        | LT  of ExprTree * ExprTree
+        | LTE of ExprTree * ExprTree
 
     let rec eval t env =
         match t with
@@ -57,7 +57,7 @@ module E =
         | EQ (t1, t2) -> (eval t1 env) = (eval t2 env)
         | GT (t1, t2) -> (eval t1 env) > (eval t2 env)
         | GTE (t1, t2) -> (eval t1 env) >= (eval t2 env)
-        | ST (t1, t2) -> (eval t1 env) < (eval t2 env)
-        | STE (t1, t2) -> (eval t1 env) <= (eval t2 env)
+        | LT (t1, t2) -> (eval t1 env) < (eval t2 env)
+        | LTE (t1, t2) -> (eval t1 env) <= (eval t2 env)
         | be -> evalBoolExp be env
         

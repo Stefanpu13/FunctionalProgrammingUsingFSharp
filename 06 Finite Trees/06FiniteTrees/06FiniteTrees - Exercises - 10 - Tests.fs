@@ -24,7 +24,7 @@ type ``Test IfThenElse``() =
         
     [<Test>]
     member t.``If boolean expression is comparison of constants - If (5 < 6) then 5 else 6,result should be 5`` () =         
-        let expr = If (ST(Const 5, Const 6), Const 5, Const 6)
+        let expr = If (LT(Const 5, Const 6), Const 5, Const 6)
 
         eval expr Map.empty |> shouldEqual <| 5
 
@@ -40,7 +40,7 @@ type ``Test IfThenElse``() =
             If (
                 And( 
                     GTE(Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
-                    ST(Ident "a", Ident "b")), 
+                    LT(Ident "a", Ident "b")), 
                 Const 5, Const 6)
         let env = Map.add "a" 2 Map.empty
         let env1 = Map.add "b" 3 env
@@ -53,7 +53,7 @@ type ``Test IfThenElse``() =
             If(
                 Or ( 
                     GTE (Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
-                    ST(Ident "a", Ident "b")), 
+                    LT(Ident "a", Ident "b")), 
                 Diff (Ident "a", Ident "b"),
                 Sum (Ident "a", Ident "b"))
 
@@ -68,13 +68,13 @@ type ``Test IfThenElse``() =
             If(
                 Or ( 
                     GTE (Prod (Const 5, Ident "a"), Prod(Const 6, Ident "a")),
-                    ST(Ident "a", Ident "b")), 
+                    LT(Ident "a", Ident "b")), 
                 Diff (Ident "a", Ident "b"),
                 Sum (Ident "a", Ident "b"))
         let expr = 
             Prod(
                 If(
-                    Not(STE(Const 3, Ident "b")),
+                    Not(LTE(Const 3, Ident "b")),
                     Ident "c", 
                     Sum (Ident "c", Const 4)),
                 ifExpr)            
