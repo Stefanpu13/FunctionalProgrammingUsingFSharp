@@ -18,13 +18,16 @@ module E =
         n2, where fibA n n1 n2 = Fn, when n1 = Fn−1 and n2 = Fn−2. Hint: consider suitable
         definitions of F−1 and F−2.
     *)
+
+    // #time
+
     let rec fibA n n1 n2 = 
         match n with
         | 0 -> n2
         | 1 -> n1
         | n -> fibA (n-1) (n1+n2) n1
 
-    [0..5] |> List.map (fun i ->fibA i 1 0)
+    [1..10000] |> List.iter (fun _ ->  [0..33] |> List.map (fun i ->fibA i 1 0) |> ignore)
 
     (*
         2. A continuation-based version fibC: int -> (int -> int) -> int that is based on the
@@ -36,7 +39,8 @@ module E =
     | 1 -> 1
     | n -> fibExer1point5 (n-1) + fibExer1point5 (n-2)
 
-    [0..5] |> List.map (fun i -> fibExer1point5 i)
+  
+    [1..10] |> List.iter (fun _ ->  [0..33] |> List.map fibExer1point5 |> ignore)
 
     let rec fibC n cont = 
         match n with
@@ -44,4 +48,5 @@ module E =
         | 1 -> cont 1
         | n -> fibC (n - 2) (fun a -> fibC (n-1) (fun b -> cont (a + b)))
 
-    [0..5] |> List.map (fun i -> fibC i id)
+      
+    [1..10] |> List.iter (fun _ ->  [0..33] |> List.map (fun i -> fibC i id) |> ignore)

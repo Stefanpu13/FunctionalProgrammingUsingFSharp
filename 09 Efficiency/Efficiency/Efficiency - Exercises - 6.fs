@@ -19,7 +19,7 @@ module E =
 
     let xs16 = List.init 1000000 (fun i -> 16)
 
-    #time
+    // #time
     
     for i in xs16 do let _ = factA(i,1) in ()
 
