@@ -1,4 +1,4 @@
-namespace Exercises3
+namespace Exercises6
 module E = 
 
     (* 9.6
