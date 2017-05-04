@@ -1,7 +1,7 @@
 namespace Exercises7
 module E = 
 
-    (* 9.6
+    (* 9.7
         Develop the following three versions of functions computing Fibonacci numbers Fn (see Exercise
         1.5):
         1. A version fibA: int -> int -> int -> int with two accumulating parameters n1 and
