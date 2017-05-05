@@ -1,5 +1,7 @@
 namespace Exercises8and9
 module E = 
+    
+    open System.Runtime.CompilerServices
 
     (* 9.8
         Develop a version of the counting function for binary trees
@@ -12,7 +14,9 @@ module E =
 
     let rec countA count = function
     | Leaf -> count
-    | Node(l, a, r) -> countA 0 l + (count + 1) + countA 0 r
+    | Node(l, a, r) -> 
+        RuntimeHelpers.EnsureSufficientExecutionStack()
+        countA 0 l + (count + 1) + countA 0 r
 
     (* 9.9
         Declare a tail-recursive functions with the type
@@ -27,9 +31,4 @@ module E =
         | Node(l, a, r) -> 
             countAC l 0 (fun lCount -> countAC r 0 (fun rCount -> cont (lCount + rCount + 1)))
 
-
-
-        
-
-
-  
+    
