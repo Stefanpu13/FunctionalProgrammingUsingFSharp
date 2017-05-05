@@ -49,6 +49,8 @@
     <Compile Include="Efficiency - Exercises - 7.fs" />
     <Compile Include="Efficiency - Exercises - 8 - 9.fs" />
     <Compile Include="Efficiency - Exercises - 10.fs" />
+    <Compile Include="Efficiency - Exercises - 11.fs" />
+    <Compile Include="Efficiency - Exercises - 11 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

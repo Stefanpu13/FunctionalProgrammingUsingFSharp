@@ -1,4 +1,4 @@
-namespace Exercises8_9
+namespace Exercises8and9
 module E = 
 
     (* 9.8
