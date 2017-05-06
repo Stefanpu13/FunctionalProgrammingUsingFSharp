@@ -24,26 +24,28 @@ module E =
 
     type Result = | Success | Fail
 
-    let tryCount n countFunc = 
+    let tryFunc n func = 
         try        
-            countFunc 0 (leftTree n (Leaf,0)) |> ignore
+            func (leftTree n (Leaf,0)) |> ignore
             Success        
         with e -> 
             Fail       
             
-    let rec findApproximateStackTraceDepth lower upper countFunc = 
+    let rec findApproximateStackTraceDepth lower upper func = 
         if lower > upper
         then
             lower
         else
             let middle = upper - (upper - lower) / 2
 
-            match tryCount middle countFunc with
-            | Success -> findApproximateStackTraceDepth (middle + 1) upper countFunc
-            | Fail -> findApproximateStackTraceDepth lower (middle - 1) countFunc
+            match tryFunc middle func with
+            | Success -> findApproximateStackTraceDepth (middle + 1) upper func
+            | Fail -> findApproximateStackTraceDepth lower (middle - 1) func
 
 
-    // findApproximateStackTraceDepth 0 150000 countA
+    findApproximateStackTraceDepth 0 150000 (fun tr -> countA 0 tr)
+
+    findApproximateStackTraceDepth 0 150000 (fun tr -> countAC tr 150000 id)
 
     // findApproximateStackTraceDepth 0 150000 (fun n tr -> countAC tr n id)
 
