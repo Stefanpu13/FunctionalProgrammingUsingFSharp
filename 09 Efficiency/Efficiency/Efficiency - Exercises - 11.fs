@@ -9,8 +9,7 @@ module E =
         subtree to the right are leaves. Similarly, using rightTree it should be possible to generate a
         big unbalanced tree to the right.
         1. Use these functions to show the stack limit when using count and countA from Exercise
-        9.8.
-        2. Use these functions to test the performance of countC and countAC from Exercise 9.9.
+        9.8.        
     *)
         
     let rec leftTree treeDepth =  function
@@ -42,17 +41,20 @@ module E =
             | Success -> findApproximateStackTraceDepth (middle + 1) upper func
             | Fail -> findApproximateStackTraceDepth lower (middle - 1) func
 
+    (*
+        Give sufficiently big stack trace depth to show that the 'countA' function causes
+        stack overflow.
 
-    findApproximateStackTraceDepth 0 150000 (fun tr -> countA 0 tr)
+        let stackTraceDepth = 150000
 
-    findApproximateStackTraceDepth 0 150000 (fun tr -> countAC tr 150000 id)
+        findApproximateStackTraceDepth 0 stackTraceDepth (fun tr -> countA 0 tr)
+        findApproximateStackTraceDepth 0 stackTraceDepth (fun tr -> countAC tr 0 id)
+    *)
 
-    // findApproximateStackTraceDepth 0 150000 (fun n tr -> countAC tr n id)
 
     (*
         2. Use these functions to test the performance of countC and countAC from Exercise 9.9.
+
+        #time
+        countAC (rightTree 150000 (Leaf, 0)) 0 id |> ignore
     *)
-
-    //#time
-
-    countAC (rightTree 150000 (Leaf, 0)) 0 id |> ignore

@@ -1,10 +1,9 @@
 namespace Exercises12
 module E = 
-    open Exercises8and9.E    
-    open Exercises11.E
     open System
     open System.Runtime.CompilerServices
-     
+    open Exercises8and9.E
+    open Exercises11.E  
 
     (* 9.12
         Develop a continuation-based version of the function preOrder from Section 6.4, and compare
@@ -29,25 +28,12 @@ module E =
         
         preOrder id t 
 
-    let t3 = Node(Node(Leaf, -3, Leaf), 0, Node(Leaf, 2, Leaf))
-    let t4 = Node(t3, 5, Node(Leaf, 7, Leaf))
+   (*
+        For stack trace dept in the interval 6000-8000 speed diff. is neglitible
+        After that dept there is not enough space for the 'preOrder' function
 
-    preOrder t4
-    preOrderTail t4
-
-    let generateBinTree depth = 
-        let rand = Random() 
-        let rec generateBinTree = function
-        | t, 0 -> t
-        | (t, n) -> 
-            if rand.Next(10) % 2 = 0
-            then generateBinTree (Node(t, n, Leaf), n - 1)
-            else generateBinTree (Node(Leaf, n, t), n - 1)
-        
-        generateBinTree (Leaf, depth)
-            
-    preOrder (generateBinTree 1000)
-
-    findApproximateStackTraceDepth 0 150000 preOrder
-    findApproximateStackTraceDepth 0 150000 preOrderTail 
+        findApproximateStackTraceDepth 0 8500 preOrder
+        findApproximateStackTraceDepth 0 85000 preOrderTail 
+   *)
+    
 
