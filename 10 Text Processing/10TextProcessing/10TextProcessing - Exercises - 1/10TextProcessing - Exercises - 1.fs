@@ -18,9 +18,14 @@ module E =
     // let wordRegex = Regex @"\G\W*(?:(\w+-*\w*)\W*)*$"
 
     module Words =         
-        let wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
+        let private wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
 
-        let addWord (words:Dictionary<string, int>) word = 
+        //Provide the ability to pass regex for words
+        // let wordRegex2 = @"\G\W*(?:(\w+-*\w*)\W*)*$"
+
+
+
+        let private addWord (words:Dictionary<string, int>) word = 
             match  words.TryGetValue word with
             | true,  count -> 
                 words.[word] <- count + 1                 
@@ -28,7 +33,7 @@ module E =
                 words.Add(word, 1)
             words
 
-        let addWords (wordRegex:Regex) words (line: string) =
+        let private addWords (wordRegex:Regex) words (line: string) =
             let m = wordRegex.Match (line.ToLower())
             if m.Success 
             then           
@@ -36,10 +41,10 @@ module E =
             else 
                 words            
 
-        let wordCount inputFile outputFile = 
+        let private wordCount addWords inputFile outputFile = 
             if File.Exists inputFile
             then             
-                let allWords = fileFold (addWords wordRegex) (Dictionary<string, int> ()) inputFile           
+                let allWords = fileFold addWords (Dictionary<string, int> ()) inputFile           
                 let output = 
                     allWords
                         |> Seq.sortBy(fun (KeyValue(k, v)) -> k)
@@ -50,5 +55,14 @@ module E =
             else 
                 failwith "file not found"       
 
+        let create regexStr = 
+            let neWordTegex = if String.IsNullOrEmpty regexStr then wordRegex else Regex regexStr
+            wordCount (addWords neWordTegex) 
+
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
-    Words.wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
+    let wordCount = Words.create null
+    wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
+
+    let wordCount2 = Words.create @"\G\W*(?:(\w+-*\w*)\W*)*$"
+    wordCount2 (baseDir + @"\files\input.txt") (baseDir + @"\files\output2.txt")
+
