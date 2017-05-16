@@ -38,12 +38,14 @@
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TextProcessing.fs" />
     <Compile Include="10TextProcessing - Exercises - 1\10TextProcessing - Exercises - 1.fs" />
+    <Compile Include="10TextProcessing - Exercises - 1\10TextProcessing - Exercises - 2.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

@@ -15,15 +15,9 @@ module E =
         The words should appears in alphabetic order and the program should not distinguish between
         small and capital letters.
     *)
-    // let wordRegex = Regex @"\G\W*(?:(\w+-*\w*)\W*)*$"
-
+    
     module Words =         
         let private wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
-
-        //Provide the ability to pass regex for words
-        // let wordRegex2 = @"\G\W*(?:(\w+-*\w*)\W*)*$"
-
-
 
         let private addWord (words:Dictionary<string, int>) word = 
             match  words.TryGetValue word with
