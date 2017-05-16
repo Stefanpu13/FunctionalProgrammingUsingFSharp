@@ -16,9 +16,10 @@ module E =
         small and capital letters.
     *)
     // let wordRegex = Regex @"\G\W*(?:(\w+-*\w*)\W*)*$"
-    let wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
 
-    let wordCount inputFile outputFile = 
+    module Words =         
+        let wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
+
         let addWord (words:Dictionary<string, int>) word = 
             match  words.TryGetValue word with
             | true,  count -> 
@@ -27,37 +28,27 @@ module E =
                 words.Add(word, 1)
             words
 
-        let wordCount words (line: string) =
+        let addWords (wordRegex:Regex) words (line: string) =
             let m = wordRegex.Match (line.ToLower())
             if m.Success 
             then           
                 List.fold addWord words (captureList m 1)
             else 
-                words
-        
-        if File.Exists inputFile
-        then             
-            let allWords = fileFold wordCount (Dictionary<string, int> ()) inputFile           
-            let output = 
-                allWords
-                    |> Seq.sortBy(fun (KeyValue(k, v)) -> k)
-                    |> Seq.map (fun (KeyValue(k, v)) -> k + " " + v.ToString())
-                    |> String.concat Environment.NewLine
-           
-            File.WriteAllText (outputFile, output)
-        else 
-            failwith "file not found"    
+                words            
 
-    
-    #time
+        let wordCount inputFile outputFile = 
+            if File.Exists inputFile
+            then             
+                let allWords = fileFold (addWords wordRegex) (Dictionary<string, int> ()) inputFile           
+                let output = 
+                    allWords
+                        |> Seq.sortBy(fun (KeyValue(k, v)) -> k)
+                        |> Seq.map (fun (KeyValue(k, v)) -> k + " " + v.ToString())
+                        |> String.concat Environment.NewLine
+            
+                File.WriteAllText (outputFile, output)
+            else 
+                failwith "file not found"       
+
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
-    wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
-
-    let writeAllText path contents = File.WriteAllText (path, contents)
-    // get all files from given dir except input
-    Directory.GetFiles(baseDir + @"\fileResources")
-        |> Array.fold (fun allText filePath -> String.Concat [|(File.ReadAllText filePath); allText|]) "" 
-        |> writeAllText (baseDir + @"\files\input.txt")
-        
-    
-    // for each file write to input
+    Words.wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
