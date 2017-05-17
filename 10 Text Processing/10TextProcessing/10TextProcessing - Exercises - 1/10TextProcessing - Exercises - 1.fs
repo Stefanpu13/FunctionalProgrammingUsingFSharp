@@ -15,7 +15,7 @@ module E =
         The words should appears in alphabetic order and the program should not distinguish between
         small and capital letters.
     *)
-    
+
     module Words =         
         let private wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
 
@@ -49,9 +49,12 @@ module E =
             else 
                 failwith "file not found"       
 
-        let create regexStr = 
-            let neWordTegex = if String.IsNullOrEmpty regexStr then wordRegex else Regex regexStr
-            wordCount (addWords neWordTegex) 
+        let getWordRegex regexStr = 
+            if String.IsNullOrEmpty regexStr then wordRegex else Regex regexStr
+
+        let createAddWords regexStr = addWords (getWordRegex regexStr) 
+
+        let create regexStr = wordCount (createAddWords regexStr)         
 
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
     let wordCount = Words.create null
