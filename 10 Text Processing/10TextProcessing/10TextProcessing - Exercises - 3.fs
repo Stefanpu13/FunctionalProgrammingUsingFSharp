@@ -13,7 +13,13 @@ module E =
     *)        
 
     let addWordsWithoutHyphens words (line:string) = 
-        let lineWithotuHyphens = line.Replace("-", "")
+        let lineWithoutHyphens = line.Replace("-", "")
         let addWords = Words.createAddWords @"\G\W*(?:(\w+-*\w*)\W*)*$"
 
-        addWords words lineWithotuHyphens
+        addWords words lineWithoutHyphens
+
+    let addSeparatedWordsWithoutHyphens words (line:string) = 
+        let lineWithoutHyphens = line.Replace("-", " ")
+        let addWords = Words.createAddWords @"\G\W*(?:(\w+-*\w*)\W*)*$"
+
+        addWords words lineWithoutHyphens 

@@ -18,4 +18,28 @@ type ``Test addWordsWithoutHyphens``() =
             |> Seq.iter dict.Add
 
         addWordsWithoutHyphens (Dictionary<string, int>()) line |> shouldEqual <| dict
+
+    [<Test>]
+    member t.``If words with hyphens are passed, result should concat words with hyphens into whole words`` () = 
+        let line = "A few simple words with two ad-hoc hyphen-words."        
+        let dict =  Dictionary<string, int> ()       
         
+        ["a", 1; "few", 1; "simple", 1; "words", 1; "with", 1;"two", 1; "adhoc", 1; "hyphenwords", 1]             
+            |> Seq.iter dict.Add
+
+        addWordsWithoutHyphens (Dictionary<string, int>()) line |> shouldEqual <| dict
+        
+// Test addSeparatedWordsWithoutHyphens
+[<TestFixture>]
+type ``Test addSeparatedWordsWithoutHyphens``() =
+
+
+    [<Test>]
+    member t.``If words with hyphens are passed, result should concat words with hyphens into whole words`` () = 
+        let line = "A few simple words with two ad-hoc hyphen-words."        
+        let dict =  Dictionary<string, int> ()       
+        
+        ["a", 1; "few", 1; "simple", 1; "words", 2; "with", 1;"two", 1; "ad", 1; "hoc", 1; "hyphen", 1]             
+            |> Seq.iter dict.Add
+
+        addSeparatedWordsWithoutHyphens (Dictionary<string, int>()) line |> shouldEqual <| dict
