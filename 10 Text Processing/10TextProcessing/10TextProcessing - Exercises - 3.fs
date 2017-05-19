@@ -2,7 +2,8 @@ namespace Exercises3
 module E =
     open System.Text
     open System.Collections.Generic
-    open Exercises1
+    open Exercises1.E
+
     
     
     (* 10.3
@@ -13,6 +14,6 @@ module E =
 
     let addWordsWithoutHyphens words (line:string) = 
         let lineWithotuHyphens = line.Replace("-", "")
-        let addWords = Exercises1.E.Words.createAddWords null
+        let addWords = Words.createAddWords @"\G\W*(?:(\w+-*\w*)\W*)*$"
 
         addWords words lineWithotuHyphens
