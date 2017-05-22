@@ -17,7 +17,7 @@ module E =
     *)
 
     module Words =         
-        let private wordRegex = Regex @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
+        let private wordRegex =  @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
 
         let private addWord (words:Dictionary<string, int>) word = 
             match  words.TryGetValue word with
@@ -49,17 +49,21 @@ module E =
             else 
                 failwith "file not found"       
 
-        let getWordRegex regexStr = 
-            if String.IsNullOrEmpty regexStr then wordRegex else Regex regexStr
+        let private getWordRegex regexStr = 
+            if String.IsNullOrEmpty regexStr then Regex wordRegex else Regex regexStr
 
-        let createAddWords regexStr = addWords (getWordRegex regexStr) 
+        let createAddWords  = function
+        | regexStr, None ->  addWords (getWordRegex regexStr)         
+        | regexStr, Some addWordsFunc -> addWordsFunc (getWordRegex regexStr)
 
-        let create regexStr = wordCount (createAddWords regexStr)         
+        let create (str, addWords) = wordCount (createAddWords (str, addWords))
+        
+        // let createWordCount = wordCount
 
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
-    let wordCount = Words.create null
+    let wordCount = Words.create (null, None)
     wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
 
-    let wordCount2 = Words.create @"\G\W*(?:(\w+-*\w*)\W*)*$"
+    let wordCount2 = Words.create (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
     wordCount2 (baseDir + @"\files\input.txt") (baseDir + @"\files\output2.txt")
 
