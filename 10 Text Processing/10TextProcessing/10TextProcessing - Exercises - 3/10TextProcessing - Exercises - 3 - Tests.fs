@@ -1,8 +1,10 @@
 module Exercises3Tests
 open NUnit.Framework
 open FsUnitTyped
+open Exercises1.E
 open Exercises3.E
 open System
+open System.IO
 open System.Collections.Generic
 
 // Test addWordsWithoutHyphens
@@ -43,3 +45,22 @@ type ``Test addSeparatedWordsWithoutHyphens``() =
             |> Seq.iter dict.Add
 
         addSeparatedWordsWithoutHyphens (Dictionary<string, int>()) line |> shouldEqual <| dict
+
+// Test addWordsFromLine2
+[<TestFixture>]
+type ``Test addWordsFromLine2``() =
+
+
+    [<Test>]
+    member t.``If words with hyphens are passed, result should concat words with hyphens into whole words`` () = 
+        let lines = ["A few simple words with two ad-hoc hyphen-words."; "Also, see how longer words are hyphen-"; "nated."]
+        // Console.WriteLine("Directory is.............................." + Files.inputDir @"10TextProcessing - Exercises - 3")
+        
+        File.WriteAllLines ((Files.inputDir @"\10TextProcessing - Exercises - 3"), lines)
+
+        wordCount2 (Files.inputDir @"\10TextProcessing - Exercises - 3") (Files.outputDir @"\10TextProcessing - Exercises - 3")
+
+        // Directory.GetCurrentDirectory() |> shouldEqual <| Files.baseDir
+
+
+        // Files.inputDir @"10TextProcessing - Exercises - 3" |> shouldEqual <| Files.inputDir @"10TextProcessing - Exercises - 31"

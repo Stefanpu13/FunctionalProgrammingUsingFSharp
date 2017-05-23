@@ -38,8 +38,7 @@ module E =
         hyphen character.   
     *)
 
-    let getWordsInLine (regexStr:string) (line: string) =
-        let regex = Regex regexStr 
+    let getWordsInLine (regex:Regex) (line: string) =        
         let m = regex.Match (line.Replace("-", "").ToLower()) 
         if m.Success 
         then           
@@ -54,7 +53,7 @@ module E =
         else 
             [], None  
 
-    getWordsInLine @"\G\W*(?:(\w+-*\w*)\W*)*$" "some so-so basic words with hyphens-"
+    getWordsInLine (Regex @"\G\W*(?:(\w+-*\w*)\W*)*$") "some so-so basic words with hyphens-"
     (*
         For the whole file:
         1. read line
@@ -65,17 +64,9 @@ module E =
             4. For each word in line add to dictionary (List.fold addWord wordsDict wordsList)
     *)
 
-    let private addWord (words:Dictionary<string, int>) word = 
-        match  words.TryGetValue word with
-        | true,  count -> 
-            words.[word] <- count + 1                 
-        | false, _ ->  
-            words.Add(word, 1)
-        words
-
-    let addWordsFromLine (words, previousLineWords) currentLineWords = 
+    let addWordsFromLine2 (wordRegex:Regex) (words, previousLineWords) currentLine = 
         let mergeHyphenatedWord  = function
-        | (previousLine, Some word), (currentLine, lastWord) ->            
+        | (previousLine:string list, Some word), (currentLine, lastWord: string option) ->            
             match currentLine with
             | firstWord::remainingWords ->
                 (word + firstWord)::remainingWords, lastWord
@@ -84,5 +75,15 @@ module E =
         | (previousLine, None), (currentLine, lastWord) -> 
             (currentLine, lastWord) 
 
-        let (newCurrentLine, lastWord) = mergeHyphenatedWord (previousLineWords, currentLineWords)
-        (List.fold addWord words newCurrentLine), currentLineWords
+        let wordsInLine = getWordsInLine wordRegex currentLine
+        let (newCurrentLine, lastWord) = mergeHyphenatedWord (previousLineWords, wordsInLine)
+        (List.fold Words.addWord words newCurrentLine), wordsInLine
+
+    let wordCount2 = 
+        let regexStr = @"\G\W*(?:(\w+-*\w*)\W*)*$"
+        
+        let getOutput (words, previousLineWords) = Words.getOutput words
+        let addWordsPart = addWordsFromLine2, (Dictionary<string, int> (), ([], None))
+
+
+        Words.create2 (regexStr, addWordsPart,  getOutput)
