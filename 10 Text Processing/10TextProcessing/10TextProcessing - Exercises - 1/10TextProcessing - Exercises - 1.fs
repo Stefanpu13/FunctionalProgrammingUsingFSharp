@@ -57,8 +57,6 @@ module E =
         | regexStr, Some addWordsFunc -> addWordsFunc (getWordRegex regexStr)
 
         let create (str, addWords) = wordCount (createAddWords (str, addWords))
-        
-        // let createWordCount = wordCount
 
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
     let wordCount = Words.create (null, None)
