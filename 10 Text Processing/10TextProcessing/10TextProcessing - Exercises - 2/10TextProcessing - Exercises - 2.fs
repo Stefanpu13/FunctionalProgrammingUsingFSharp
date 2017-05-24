@@ -25,14 +25,11 @@ module E =
                         <title>F# Text processing - Exercise 2</title>
                     </head>
                     <body>
-                        <h1>F# Text processing - Exercise 2</h1>"
-                        
+                        <h1>F# Text processing - Exercise 2</h1>"                        
                 
-            let postamble = "</body></html>"            
-            
+            let postamble = "</body></html>"           
             let fileContent = File.ReadAllText inputFile
-            let encodedContent ="<pre>" + (HttpUtility.HtmlEncode fileContent) + "</pre>"
-            
+            let encodedContent ="<pre>" + (HttpUtility.HtmlEncode fileContent) + "</pre>"            
             let allHTMLContent = preamble + encodedContent + postamble
             
             File.WriteAllText ((baseDir + @"\files\fileName.html"), allHTMLContent)

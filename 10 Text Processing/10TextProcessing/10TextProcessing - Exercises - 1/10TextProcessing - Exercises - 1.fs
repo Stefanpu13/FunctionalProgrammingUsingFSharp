@@ -3,7 +3,11 @@ open System
 open System.IO
 open System.Collections.Generic
 open System.Text.RegularExpressions
+#if INTERACTIVE
+#load "../TextProcessing.fs"
+#endif
 open TextProcessing.TextProcessing
+
 module E = 
     (* 10.1
         The term “word” is used in this exercise to denote a string not containing blank characters. The
@@ -22,18 +26,12 @@ module E =
         let inputDir parentDir = baseDir + parentDir + @"\input.txt"
         let outputDir parentDir = baseDir + parentDir + @"\output.txt"
 
-        let createInputFile text = 
-            File.WriteAllText ((inputDir @"\10TextProcessing - Exercises - 1\"), text)
-
-        let createOutputFile text = 
-            File.WriteAllText ((outputDir @"\10TextProcessing - Exercises - 1\"), text)
-
 
 
     module Words =         
-        let private wordRegex =  @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
+        let wordRegex =  @"\G[^А-я0-9]*(?:([А-я0-9]+(?:-*)[А-я0-9]*)[^А-я0-9]*)*$"
 
-        let addWord (words:Dictionary<string, int>) word = 
+        let countWord (words:Dictionary<string, int>) word = 
             match  words.TryGetValue word with
             | true,  count -> 
                 words.[word] <- count + 1                 
@@ -41,62 +39,50 @@ module E =
                 words.Add(word, 1)
             words
 
-        let addWords (wordRegex:Regex) words (line: string) =
+        let countWords (wordRegex:Regex) words (line: string) =
             let m = wordRegex.Match (line.ToLower())
             if m.Success 
             then           
-                List.fold addWord words (captureList m 1)
+                List.fold countWord words (captureList m 1)
             else 
-                words      
+                words
 
-        let private wordCount addWords inputFile outputFile = 
-            if File.Exists inputFile
-            then             
-                let allWords = fileFold addWords (Dictionary<string, int> ()) inputFile           
-                let output = 
-                    allWords
-                        |> Seq.sortBy(fun (KeyValue(k, v)) -> k)
-                        |> Seq.map (fun (KeyValue(k, v)) -> k + " " + v.ToString())
-                        |> String.concat Environment.NewLine
-            
-                File.WriteAllText (outputFile, output)
-            else 
-                failwith "file not found"      
+        let private getWordRegex regexStr = 
+            if String.IsNullOrEmpty regexStr then Regex wordRegex else Regex regexStr
+        let createCountWordsFunc  = function
+        | regexStr, None ->  countWords (getWordRegex regexStr)         
+        | regexStr, Some countWordsFunc -> countWordsFunc (getWordRegex regexStr)  
 
-        let getOutput allWords = 
+        let createOutputFileContent allWords = 
             allWords
                 |> Seq.sortBy(fun (KeyValue(k, v)) -> k)
                 |> Seq.map (fun (KeyValue(k, v)) -> k + " " + v.ToString())
                 |> String.concat Environment.NewLine
 
-        let private wordCount2 getAllWords getOutput inputFile outputFile = 
+        let private wordCount getAllWords createOutputFileContent inputFile outputFile = 
             if File.Exists inputFile
             then             
                 let allWords = getAllWords inputFile
-                let output = getOutput allWords
+                let output = createOutputFileContent allWords
 
                 File.WriteAllText (outputFile, output)
             else 
-                failwith "file not found"    
+              failwith "file not found"            
 
-        let private getWordRegex regexStr = 
-            if String.IsNullOrEmpty regexStr then Regex wordRegex else Regex regexStr
+        let create (regex, (countWords, initialState) , writeToOutputFile) =                 
+            let getAllWords = (fileFold (countWords (Regex regex)) initialState)
+            wordCount getAllWords writeToOutputFile        
 
-        let createAddWords  = function
-        | regexStr, None ->  addWords (getWordRegex regexStr)         
-        | regexStr, Some addWordsFunc -> addWordsFunc (getWordRegex regexStr)
+    // #if INTERACTIVE
+    // #time
+    let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
+    let countWordsDefaultPart = (Words.countWords, Dictionary<string, int>())
+    let wordCount = Words.create (Words.wordRegex, countWordsDefaultPart, Words.createOutputFileContent)
+    wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
 
-        let create (regexStr, addWords) = wordCount (createAddWords (regexStr, addWords))
-
-        let create2 (regex, (addWords, initialState) , getOutput) =                 
-            let getAllWords = (fileFold (addWords (Regex regex)) initialState)
-            wordCount2 getAllWords getOutput        
+    let wordCount2 = Words.create (@"\G\W*(?:(\w+-*\w*)\W*)*$", countWordsDefaultPart, Words.createOutputFileContent)
+    wordCount2 (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")    
+    // #else
+    let msg = "Not Interactive"
+    // #endif
     
-    // let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
-    // let wordCount = Words.create (null, None)
-    // wordCount (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")
-
-    // let wordCount2 = Words.create (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
-    // wordCount2 (baseDir + @"\files\input.txt") (baseDir + @"\files\output2.txt")
-
-    // let wordCount3 = Words.create2 (@"\G\W*(?:(\w+-*\w*)\W*)*$", (Words.addWords, Dictionary<string, int>()), Words.getOutput)

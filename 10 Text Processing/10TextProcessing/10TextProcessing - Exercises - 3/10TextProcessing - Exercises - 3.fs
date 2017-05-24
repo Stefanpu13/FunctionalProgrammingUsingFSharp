@@ -12,18 +12,17 @@ module E =
         to capture the list of words in a string while removing any hyphen character.
     *)        
 
-    let addWordsWithoutHyphens words (line:string) = 
+    let countWordsWithoutHyphens words (line:string) = 
         let lineWithoutHyphens = line.Replace("-", "")        
-        let addWords = Words.createAddWords (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
+        let addWords = Words.createCountWordsFunc (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
 
         addWords words lineWithoutHyphens
 
-    let addSeparatedWordsWithoutHyphens words (line:string) = 
-        let lineWithoutHyphens = line.Replace("-", " ")
-        
-        let addWords = Words.createAddWords (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
+    let countSeparatedWordsWithoutHyphens words (line:string) = 
+        let lineWithoutHyphens = line.Replace("-", " ")        
+        let countWords = Words.createCountWordsFunc (@"\G\W*(?:(\w+-*\w*)\W*)*$", None)
 
-        addWords words lineWithoutHyphens 
+        countWords words lineWithoutHyphens 
 
     (*
       2.Make a function of type string -> (string list)*(string option) removing
@@ -39,7 +38,7 @@ module E =
     *)
 
     let getWordsInLine (regex:Regex) (line: string) =        
-        let m = regex.Match (line.Replace("-", "").ToLower()) 
+        let m = regex.Match (line.Replace("-","")) 
         if m.Success 
         then           
             let words = captureList m 1
@@ -53,37 +52,22 @@ module E =
         else 
             [], None  
 
-    getWordsInLine (Regex @"\G\W*(?:(\w+-*\w*)\W*)*$") "some so-so basic words with hyphens-"
-    (*
-        For the whole file:
-        1. read line
-        2. addWordsFromLine 
-            - getWordsInLine
-            3. If revious line last word ends with hyphen
-                - prevLine.lastWord + currentLine.firstWord::restWordsInCurrentLine
-            4. For each word in line add to dictionary (List.fold addWord wordsDict wordsList)
-    *)
-
-    let addWordsFromLine2 (wordRegex:Regex) (words, previousLineWords) currentLine = 
-        let mergeHyphenatedWord  = function
-        | (previousLine:string list, Some word), (currentLine, lastWord: string option) ->            
-            match currentLine with
-            | firstWord::remainingWords ->
-                (word + firstWord)::remainingWords, lastWord
-            | [] -> 
-                (currentLine, lastWord)
-        | (previousLine, None), (currentLine, lastWord) -> 
+    let countWordsFromLine (wordRegex:Regex) (words, previousLineWords) (currentLine:string) = 
+        let mergeHyphenatedWord = function
+        | (previousLineWords, Some word), (firstWord::remainingWords, lastWord) ->
+            (word + firstWord)::remainingWords, lastWord
+        | _ , (currentLine, lastWord) -> 
             (currentLine, lastWord) 
 
         let wordsInLine = getWordsInLine wordRegex currentLine
         let (newCurrentLine, lastWord) = mergeHyphenatedWord (previousLineWords, wordsInLine)
-        (List.fold Words.addWord words newCurrentLine), wordsInLine
+        (List.fold Words.countWord words newCurrentLine), wordsInLine
 
-    let wordCount2 = 
+    let wordCount = 
         let regexStr = @"\G\W*(?:(\w+-*\w*)\W*)*$"
         
-        let getOutput (words, previousLineWords) = Words.getOutput words
-        let addWordsPart = addWordsFromLine2, (Dictionary<string, int> (), ([], None))
+        let createOutputFileContent (words, previousLineWords) = Words.createOutputFileContent words
+        let addWordsPart = countWordsFromLine, (Dictionary<string, int> (), ([], None))
 
 
-        Words.create2 (regexStr, addWordsPart,  getOutput)
+        Words.create (regexStr, addWordsPart,  createOutputFileContent)    
