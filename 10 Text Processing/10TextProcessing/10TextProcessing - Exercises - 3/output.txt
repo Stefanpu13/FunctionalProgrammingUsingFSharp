@@ -1,0 +1,4 @@
+are 1
+hyphennated 1
+hyphenwords 1
+words 2

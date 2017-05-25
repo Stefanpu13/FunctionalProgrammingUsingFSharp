@@ -46,13 +46,13 @@ type ``Test addSeparatedWordsWithoutHyphens``() =
 
         countSeparatedWordsWithoutHyphens (Dictionary<string, int>()) line |> shouldEqual <| dict
 
-// Test addWordsFromLine2
+// Test countWordsFromLine
 [<TestFixture>]
-type ``Test addWordsFromLine2``() =
+type ``Test countWordsFromLine``() =
 
 
     [<Test>]
-    member t.``If words with hyphens are passed, result should concat words with hyphens into whole words`` () = 
+    member t.``If words are divided with hyphen, result should concat then into whole words`` () = 
         let lines = [
             "words hyphen-words."; 
             "words are hyphen-"; 

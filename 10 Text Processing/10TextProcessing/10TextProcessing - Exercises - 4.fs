@@ -6,7 +6,9 @@ open System.Text.RegularExpressions
 #endif
 open TextProcessing.TextProcessing
 module E =     
-    type Position = {degrees: float; minutes: float; seconds: float; sign: float}
+    type ValidPosition = {degrees: float; minutes: float; seconds: float; sign: float}
+    type Position =  ValidPosition of ValidPosition  | InvalidPosition
+    type Coord = ValidCoord of float | InvalidCoord
     let signNum sign = 
         if sign = "E" || sign = "N" 
         then  1.0 
@@ -14,13 +16,16 @@ module E =
         then -1.0 
         else 0.0
 
-    let getTotalSeconds {degrees=deg; minutes=min; seconds=sec; sign=sign} = 
-        (sec + 60.0 * min + 60.0 * 60.0 * deg) * sign
+    let getTotalSeconds position = 
+        match position with
+        | ValidPosition {degrees=deg; minutes=min; seconds=sec; sign=sign}  ->
+            (sec + 60.0 * min + 60.0 * 60.0 * deg) * sign
+        | InvalidPosition -> -1.0
 
     let toPosition  = function
     | degs::mins::secs::[sign] ->
-        {degrees=float degs;minutes=float mins; seconds=float secs; sign=sign}
-    | _ -> {degrees=0.0;minutes=0.0; seconds=0.0; sign=0.0}
+        ValidPosition {degrees=float degs;minutes=float mins; seconds=float secs; sign=sign}
+    | _ -> InvalidPosition
 
     let toListOfPositionParts (posistion:string) = 
         Regex

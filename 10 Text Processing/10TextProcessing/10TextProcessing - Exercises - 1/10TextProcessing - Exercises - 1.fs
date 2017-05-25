@@ -6,6 +6,7 @@ open System.Text.RegularExpressions
 #if INTERACTIVE
 #load "../TextProcessing.fs"
 #endif
+
 open TextProcessing.TextProcessing
 
 module E = 
@@ -73,8 +74,8 @@ module E =
             let getAllWords = (fileFold (countWords (Regex regex)) initialState)
             wordCount getAllWords writeToOutputFile        
 
-    // #if INTERACTIVE
-    // #time
+    #if INTERACTIVE 
+    #time
     let baseDir =  Directory.GetCurrentDirectory() + @"\10TextProcessing\10TextProcessing - Exercises - 1"
     let countWordsDefaultPart = (Words.countWords, Dictionary<string, int>())
     let wordCount = Words.create (Words.wordRegex, countWordsDefaultPart, Words.createOutputFileContent)
@@ -82,7 +83,5 @@ module E =
 
     let wordCount2 = Words.create (@"\G\W*(?:(\w+-*\w*)\W*)*$", countWordsDefaultPart, Words.createOutputFileContent)
     wordCount2 (baseDir + @"\files\input.txt") (baseDir + @"\files\output.txt")    
-    // #else
-    let msg = "Not Interactive"
-    // #endif
+    #endif
     
