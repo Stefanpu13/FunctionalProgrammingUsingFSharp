@@ -49,6 +49,7 @@
     <Compile Include="10TextProcessing - Exercises - 2\10TextProcessing - Exercises - 2.fs" />
     <Compile Include="10TextProcessing - Exercises - 3\10TextProcessing - Exercises - 3.fs" />
     <Compile Include="10TextProcessing - Exercises - 3\10TextProcessing - Exercises - 3 - Tests.fs" />
+    <Compile Include="10TextProcessing - Exercises - 4.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
