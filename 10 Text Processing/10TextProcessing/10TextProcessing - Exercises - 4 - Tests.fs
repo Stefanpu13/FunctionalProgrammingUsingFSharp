@@ -1,8 +1,10 @@
 module Exercises4Tests
 #if INTERACTIVE
-#r @"C:/Programming/Tutorials/FSharp/CodeFromBooks/FPUsingFSharp/10 Text Processing/10TextProcessing/bin/Debug/nunit.framework.dll"
-#r @"C:/Programming/Tutorials/FSharp/CodeFromBooks/FPUsingFSharp/10 Text Processing/10TextProcessing/bin/Debug/FsUnit.NUnit.dll"
+#I @"bin\Debug"
+// #r "nunit.framework.dll"
+#r  "FsUnit.NUnit.dll"
 #endif
+
 open NUnit.Framework
 open System.IO
 open FsUnitTyped
