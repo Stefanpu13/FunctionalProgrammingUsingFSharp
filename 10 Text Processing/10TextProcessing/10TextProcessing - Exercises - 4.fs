@@ -7,7 +7,7 @@ open System.Text.RegularExpressions
 open TextProcessing.TextProcessing
 module E =    
     type Direction = E|W|S|N
-    type PositionPart = Degree of string*Direction  | Minute of string | Second of string | Sign of string
+    type PositionPart = Degree of string*Direction  | Minute of string | Second of string 
     type ValidPosition = {degrees: int; minutes: int; seconds: float; sign: float}
     type Position =  Lat of ValidPosition  | Lgt of ValidPosition  | InvalidPosition
     type Coord = ValidCoord of float | InvalidCoord    
