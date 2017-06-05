@@ -62,16 +62,13 @@ module E =
         
     let getPosition position = 
         let regex = @"(\s?(?:[0-9]*\.*[0-9]*[^\w]*){3} [E|W|S|N])*"
-        let m = Regex.Match (position, regex) 
-        // let m = Regex.Match ( """14*-59'59.03" S 55*1'47" W""", regex)        
-        let captures = captureList m 1        
-        // List.map parsePosition captures
+        let m = Regex.Match (position, regex)              
+        let captures = captureList m 1                
         match captures with
         | lat::[lgt] -> parseCoordinates (lat, lgt)
         | _ -> InvalidCoords
 
-module Client = 
-    
+module Client =     
     match E.getPosition """14*-59'59.03" S 55*1'47" W""" with
     | E.InvalidCoords -> printfn "Invalid"
     | E.ValidCoords (lat, lgt) -> printfn "%A %A" lat lgt
