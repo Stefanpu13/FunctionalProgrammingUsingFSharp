@@ -32,8 +32,6 @@ module E =
     Seq.iter (fun it ->
         Seq.iter (fun i -> (Seq.item i cachedFactoriels) |> ignore) [1..13]) [1..100000]
 
-
-
     (* 11.3
         Make a declaration for the sequence of seq [1; 1; 2; 6; . . . ; n!; . . .], where the i+1’st element is
         generated from the i'th element by multiplication with i + 1.
@@ -80,14 +78,30 @@ module E =
     //     })
 
     //     Seq.head (iterCached f x n)
+        
+    module iterC =         
+        let mutable cached = Seq.initInfinite id
+        let mutable isCreated = false
+
+        let iterCached f x n = 
+            if isCreated
+            then 
+                Seq.item n cached
+            else
+                cached <- Seq.unfold (fun st -> Some (f st, f st)) x
+                isCreated <- true
+                Seq.item n cached
 
 
-    let sss = Seq.initInfinite
-    let rec iterCached f x n =  seq {
-            match n with 
-            | 0 -> yield x
-            | n -> yield! iterCached f (f x) (n-1)
-        }
+    let iterCached f x n= Seq.cache (seq{
+        match n with
+        | 0 -> yield x
+        | n -> yield! Seq.unfold (fun st -> Some (f st, f st)) x})
+
+    let iterCached2 f x = function
+    | 0 -> x
+    | n ->
+        Seq.item n (Seq. cache (Seq.unfold (fun st -> Some (f st, f st)) x))
 
     // let iterCached2 f x = function
     // | 0 -> x
@@ -95,12 +109,13 @@ module E =
 
 
 
-    iter ((+) 1) 1 10
-    iterCached ((+) 1) 1 10
+    iter ((+) 1) 1 1500000
+    iterC.iterCached ((+) 1) 1 1500000
+    Seq.item 1500000 (iterCached ((+) 1) 1 1500000)
+    iterCached2 ((+) 1) 1 1500000
 
     #time
-    Seq.iter (fun it ->
-        Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..1000]) [1..10000]
-
-    Seq.iter (fun it ->
-        Seq.iter (fun i -> Seq.head (iterCached ((+) 1) 1 i) |> ignore) [1..1000]) [1..10]    
+    
+    Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..5000]
+    
+    Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..5000]
