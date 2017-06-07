@@ -1,5 +1,7 @@
 namespace Exercises1
 
+open System.Collections.Generic
+
 module E = 
     let add a b = a + b
 
@@ -65,19 +67,14 @@ module E =
         the property that the n + 1’st element of the sequence can be computed from the n’th element
         by an application of f.
     *)
+
+    // Note: Could not understand how exactly to overcome the drawback
     let rec iter f x = function
     | 0 -> x
     | n -> iter f (f x) (n-1)
 
+    let iter2 f x n = [1..n] |> List.fold (fun st el -> f st) x
 
-    // let iterCached f x n = 
-    //     let rec iterCached f x n = Seq.cache (seq {
-    //         match n with 
-    //         | 0 -> yield x
-    //         | n -> yield! iterCached f (f x) (n-1)
-    //     })
-
-    //     Seq.head (iterCached f x n)
         
     module iterC =         
         let mutable cached = Seq.initInfinite id
@@ -91,7 +88,6 @@ module E =
                 cached <- Seq.unfold (fun st -> Some (f st, f st)) x
                 isCreated <- true
                 Seq.item n cached
-
 
     let iterCached f x n= Seq.cache (seq{
         match n with
@@ -108,14 +104,53 @@ module E =
     // | n -> Seq.
 
 
-
-    iter ((+) 1) 1 1500000
+    List.iter (fun i -> iter ((+) 1) 1 1500000 |> ignore) [1..1000]    
     iterC.iterCached ((+) 1) 1 1500000
     Seq.item 1500000 (iterCached ((+) 1) 1 1500000)
     iterCached2 ((+) 1) 1 1500000
+
+
+    
 
     #time
     
     Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..5000]
     
-    Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..5000]
+    Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..500000]
+
+    (* 11.6
+        Have a look at the unfold function from the Seq library. Make a declaration of the sRoot
+        function from Section 11.5 using Seq.unfold. That declaration should be based on the idea
+        that the sequence generation is stopped when the desired tolerance is reached. Measure the
+        possible performance gains.
+    *)
+
+    
+    let iterate f x = Seq.initInfinite (fun i -> iter f x i)
+
+    let enumerator (m: IEnumerable<'c>) =
+        let e = ref (m.GetEnumerator())
+        let f () =
+            match (!e).MoveNext() with
+            | false -> None
+            | _ -> Some ((!e).Current)
+        f
+    
+    let rec inTolerance (eps:float) sq =
+        let f = enumerator sq
+        let nextVal() = Option.get(f())
+        let rec loop a = 
+            let b = nextVal()
+            if abs(a-b) > eps then loop b else a
+
+        loop(nextVal())
+
+    // let inTolerance2 (eps:float) sq = 
+    //     Seq.unfold(fun (res, prev)->
+    //         if abs(res-prev) with 
+    //         |)
+
+    let next a x = (a/x + x)/2.0
+    let sRoot a = inTolerance 1E-6 (iterate (next a) 1.0)
+
+    sRoot 12423411.0
