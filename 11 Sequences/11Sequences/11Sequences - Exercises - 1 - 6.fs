@@ -2,9 +2,7 @@ namespace Exercises1
 
 open System.Collections.Generic
 
-module E = 
-    let add a b = a + b
-
+module E =     
     (* 11.1
         Make a declaration for the sequence of odd numbers.
     *)
@@ -21,8 +19,8 @@ module E =
     }
     
     // #time - run it to see 
-    Seq.iter (fun it ->
-        Seq.iter (fun i -> (Seq.item i factoriels) |> ignore) [1..13]) [1..100000]
+    // Seq.iter (fun it ->
+    //     Seq.iter (fun i -> (Seq.item i factoriels) |> ignore) [1..13]) [1..100000]
 
 
     let cachedFactoriels = Seq.cache (seq{
@@ -30,9 +28,9 @@ module E =
         yield! (Seq.initInfinite (fun i -> [1..i] |> List.fold (*) 1) |> Seq.skip 1)
     })
 
-    Seq.item 5 cachedFactoriels
-    Seq.iter (fun it ->
-        Seq.iter (fun i -> (Seq.item i cachedFactoriels) |> ignore) [1..13]) [1..100000]
+    // Seq.item 5 cachedFactoriels
+    // Seq.iter (fun it ->
+    //     Seq.iter (fun i -> (Seq.item i cachedFactoriels) |> ignore) [1..13]) [1..100000]
 
     (* 11.3
         Make a declaration for the sequence of seq [1; 1; 2; 6; . . . ; n!; . . .], where the i+1’st element is
@@ -44,20 +42,23 @@ module E =
             Some (currentNum * prevFact, (currentNum * prevFact,   currentNum + 1 ))) (1, 1)      
     }    
 
-    Seq.iter (fun it ->
-        Seq.iter (fun i -> (Seq.item i cachedFactoriels2) |> ignore) [1..13]) [1..100000]
+    // Seq.iter (fun it ->
+    //     Seq.iter (fun i -> (Seq.item i cachedFactoriels2) |> ignore) [1..13]) [1..100000]
 
     (* 11.4
         Declare a function that, for given i and n, selects the sublist [ai; ai+1; . . . ; ai+n−1] of a sequence
         seq [a0; a1; . . .].
-    *)
+    *)    
 
     let sublist seq i n = 
-        if i>n || i < 0
+        if i < 0 || n <= 0 || Seq.isEmpty seq
         then Seq.empty
+        elif n + i - 1 >= Seq.length seq
+        then [i..(Seq.length seq - 1)] |> Seq.map (fun i -> Seq.item i seq) 
         else 
-            [i..n] |> Seq.map (fun i -> Seq.item i seq) 
+            [i..(n+i-1)] |> Seq.map (fun i -> Seq.item i seq) 
 
+    Seq.item 123 [1]
     sublist cachedFactoriels2 6 10
 
 
@@ -99,24 +100,15 @@ module E =
     | n ->
         Seq.item n (Seq. cache (Seq.unfold (fun st -> Some (f st, f st)) x))
 
-    // let iterCached2 f x = function
-    // | 0 -> x
-    // | n -> Seq.
-
-
-    List.iter (fun i -> iter ((+) 1) 1 1500000 |> ignore) [1..1000]    
-    iterC.iterCached ((+) 1) 1 1500000
-    Seq.item 1500000 (iterCached ((+) 1) 1 1500000)
-    iterCached2 ((+) 1) 1 1500000
-
-
-    
-
     #time
-    
-    Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..5000]
-    
-    Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..500000]
+
+    // iter ((+) 1) 1 1500000
+    // iterC.iterCached ((+) 1) 1 1500000
+    // Seq.item 1500000 (iterCached ((+) 1) 1 1500000)
+    // iterCached2 ((+) 1) 1 1500000
+        
+    // Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..5000]    
+    // Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..500000]
 
     (* 11.6
         Have a look at the unfold function from the Seq library. Make a declaration of the sRoot
@@ -124,7 +116,6 @@ module E =
         that the sequence generation is stopped when the desired tolerance is reached. Measure the
         possible performance gains.
     *)
-
     
     let iterate f x = Seq.initInfinite (fun i -> iter f x i)
 
@@ -145,12 +136,15 @@ module E =
 
         loop(nextVal())
 
-    // let inTolerance2 (eps:float) sq = 
-    //     Seq.unfold(fun (res, prev)->
-    //         if abs(res-prev) with 
-    //         |)
-
+    let iterate2 f x = Seq.unfold (fun fx -> 
+        let newState = f fx
+        Some (newState, newState )) x
     let next a x = (a/x + x)/2.0
     let sRoot a = inTolerance 1E-6 (iterate (next a) 1.0)
+    let sRoot2 a = inTolerance 1E-6 ( iterate2 (next a) 1.0)
 
-    sRoot 12423411.0
+    // sRoot2 123123123.0 = sRoot 123123123.0
+
+    // List.iter (fun i -> sRoot i|> ignore) [1000.0..2000000.0]
+    // List.iter (fun i -> sRoot2 i|> ignore) [1000.0..2000000.0]
+    

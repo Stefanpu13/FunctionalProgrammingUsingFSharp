@@ -43,8 +43,8 @@
     <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="11Sequences - Exercises - 1.fs" />
-    <Compile Include="11Sequences - Exercises - 1 - Tests.fs" />
+    <Compile Include="11Sequences - Exercises - 1 - 6.fs" />
+    <Compile Include="11Sequences - Exercises - 1 - 6 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
