@@ -6,8 +6,8 @@ module Exercises4Tests
 #endif
 
 open NUnit.Framework
-open System.IO
 open FsUnitTyped
+open System.IO
 open Exercises4.E
 
 // Test getPosition
