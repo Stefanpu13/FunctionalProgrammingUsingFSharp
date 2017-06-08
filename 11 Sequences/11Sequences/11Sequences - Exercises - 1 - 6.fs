@@ -42,6 +42,7 @@ module E =
             Some (currentNum * prevFact, (currentNum * prevFact,   currentNum + 1 ))) (1, 1)      
     }    
 
+    // Seq.item 5 cachedFactoriels2
     // Seq.iter (fun it ->
     //     Seq.iter (fun i -> (Seq.item i cachedFactoriels2) |> ignore) [1..13]) [1..100000]
 
@@ -52,14 +53,11 @@ module E =
 
     let sublist seq i n = 
         if i < 0 || n <= 0 || Seq.isEmpty seq
-        then Seq.empty
-        elif n + i - 1 >= Seq.length seq
-        then [i..(Seq.length seq - 1)] |> Seq.map (fun i -> Seq.item i seq) 
+        then Seq.empty        
         else 
             [i..(n+i-1)] |> Seq.map (fun i -> Seq.item i seq) 
-
-    Seq.item 123 [1]
-    sublist cachedFactoriels2 6 10
+    
+    // sublist cachedFactoriels2 6 10
 
 
     (* 11.5

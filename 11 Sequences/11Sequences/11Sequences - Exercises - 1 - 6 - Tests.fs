@@ -9,15 +9,15 @@ open NUnit.Framework
 open FsUnitTyped
 open Exercises1.E
 open System
-let rand = Random ()
 
 // Test odd numbers
 [<TestFixture>]
 type ``Test odd numbers``() =   
+    let rand = Random ()
 
     [<Test>]
     member t.``Random sequence element should be odd`` () = 
-        (Seq.item (rand.Next(0, 100)) odd) % 2 |> shouldEqual <| 1
+        (Seq.item (4) odd) % 2 |> shouldEqual <| 1
         
     [<Test>]
     member t.``List of 3th, 4th, 5th elem  should equal [5; 7; 9]`` () = 
@@ -26,6 +26,7 @@ type ``Test odd numbers``() =
 // Test factoriels
 [<TestFixture>]
 type ``Test factoriels``() =   
+    let rand = Random ()
 
     [<Test>]
     member t.``List of 3th, 4th, 5th elem  should equal [2; 6; 24] `` () = 
@@ -40,10 +41,20 @@ type ``Test factoriels``() =
 // Test sublist
 [<TestFixture>]
 type ``Test sublist``() =   
+    let rand = Random ()
 
     [<Test>]
-    member t.``If i < 0 or i > n list should be empty`` () = 
+    member t.``If i < 0 list should be empty`` () = 
         sublist [1..5] -2  2 |> shouldBeEmpty
+        
+    [<Test>]
+    member t.``If n <= 0 list should be empty`` () = 
+        sublist [1..5] 1 -1 |> shouldBeEmpty    
+        sublist [1..5] 1 0 |> shouldBeEmpty
+
+    [<Test>]
+    member t.``If input seq is empty,  list should be empty`` () = 
+        sublist Seq.empty 1 2|> shouldBeEmpty    
         
 
     [<Test>]
