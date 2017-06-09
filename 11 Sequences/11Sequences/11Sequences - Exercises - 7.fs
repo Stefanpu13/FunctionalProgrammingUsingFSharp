@@ -20,3 +20,15 @@ module E =
         ) (1, 1, 1)
 
     // generateSummands 2
+
+    (* 11.7.2
+        Declare a function that accumulates the elements of a sequence of floats. I.e. given a sequence
+        seq [x0; x1; x2; . . .] it generates the sequence seq [x0; x0 + x1; x0 + x1 + x2; . . .].
+    *)
+
+    let accumulateSeq (seq:seq<float>) =
+        let res, st = Seq.mapFold (fun sum el-> (sum + el, sum + el)) 0.0 seq
+        res        
+
+    accumulateSeq [1.0..4.0]
+    accumulateSeq Seq.empty        
