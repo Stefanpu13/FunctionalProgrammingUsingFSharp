@@ -1,4 +1,4 @@
-namespace Exercises1
+namespace Exercises1to6
 
 open System.Collections.Generic
 
@@ -56,9 +56,6 @@ module E =
         then Seq.empty        
         else 
             [i..(n+i-1)] |> Seq.map (fun i -> Seq.item i seq) 
-    
-    // sublist cachedFactoriels2 6 10
-
 
     (* 11.5
         The declaration of the function iterate f on Page 260 has the drawback that fn x is computed
@@ -74,39 +71,12 @@ module E =
 
     let iter2 f x n = [1..n] |> List.fold (fun st el -> f st) x
 
-        
-    module iterC =         
-        let mutable cached = Seq.initInfinite id
-        let mutable isCreated = false
-
-        let iterCached f x n = 
-            if isCreated
-            then 
-                Seq.item n cached
-            else
-                cached <- Seq.unfold (fun st -> Some (f st, f st)) x
-                isCreated <- true
-                Seq.item n cached
-
-    let iterCached f x n= Seq.cache (seq{
-        match n with
-        | 0 -> yield x
-        | n -> yield! Seq.unfold (fun st -> Some (f st, f st)) x})
-
-    let iterCached2 f x = function
-    | 0 -> x
-    | n ->
-        Seq.item n (Seq. cache (Seq.unfold (fun st -> Some (f st, f st)) x))
-
-    #time
-
-    // iter ((+) 1) 1 1500000
-    // iterC.iterCached ((+) 1) 1 1500000
-    // Seq.item 1500000 (iterCached ((+) 1) 1 1500000)
-    // iterCached2 ((+) 1) 1 1500000
-        
-    // Seq.iter (fun i -> iter ((+) 1) 1 i |> ignore) [1..5000]    
-    // Seq.iter (fun i -> iterC.iterCached ((+) 1) 1 i |> ignore) [1..500000]
+    let iter3 f x n=  Seq.item n (Seq.unfold (fun st -> Some (st, f st)) x)    
+    
+    //#time
+    // iter ((+) 1) 1 10000000
+    // iter2 ((+) 1) 1 10000000
+    // iter3 ((+) 1) 1 10000000
 
     (* 11.6
         Have a look at the unfold function from the Seq library. Make a declaration of the sRoot
@@ -136,13 +106,13 @@ module E =
 
     let iterate2 f x = Seq.unfold (fun fx -> 
         let newState = f fx
-        Some (newState, newState )) x
+        Some (fx, newState )) x
     let next a x = (a/x + x)/2.0
     let sRoot a = inTolerance 1E-6 (iterate (next a) 1.0)
-    let sRoot2 a = inTolerance 1E-6 ( iterate2 (next a) 1.0)
+    let sRoot2 a = inTolerance 1E-6 (iterate2 (next a) 1.0)    
 
-    // sRoot2 123123123.0 = sRoot 123123123.0
+    // sRoot 15.0 = sRoot2 15.0
 
-    // List.iter (fun i -> sRoot i|> ignore) [1000.0..2000000.0]
-    // List.iter (fun i -> sRoot2 i|> ignore) [1000.0..2000000.0]
+    // List.iter (fun i -> sRoot i|> ignore) [1000.0..200000.0]
+    // List.iter (fun i -> sRoot2 i|> ignore) [1000.0..200000.0]
     
