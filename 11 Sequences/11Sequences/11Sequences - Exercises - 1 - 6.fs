@@ -83,8 +83,7 @@ module E =
         function from Section 11.5 using Seq.unfold. That declaration should be based on the idea
         that the sequence generation is stopped when the desired tolerance is reached. Measure the
         possible performance gains.
-    *)
-    
+    *) 
     let iterate f x = Seq.initInfinite (fun i -> iter f x i)
 
     let enumerator (m: IEnumerable<'c>) =

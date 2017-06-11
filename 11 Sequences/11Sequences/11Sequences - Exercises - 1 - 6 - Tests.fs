@@ -1,4 +1,4 @@
-module Exercises1Tests
+module Exercises1To6Tests
 #if INTERACTIVE
 #I @"bin\Debug"
 #r "nunit.framework.dll"
