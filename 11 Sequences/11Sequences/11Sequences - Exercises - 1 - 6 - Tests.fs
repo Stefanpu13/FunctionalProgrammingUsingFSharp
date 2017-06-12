@@ -33,10 +33,17 @@ type ``Test factoriels``() =
         ([3..5] |> List.map( fun i -> Seq.item (i - 1) factoriels)) |> shouldEqual <| [2; 6; 24]
 
     [<Test>]
-    member t.``For Random number between 1..10 "factoriels" and "cachedFactoriels" and "cachedFactoriels2" should be equal`` () =          
-        let randomNum = rand.Next(1, 10)
-        let initValue = Seq.item randomNum factoriels
-        List.map (Seq.item randomNum) [cachedFactoriels;cachedFactoriels2] |> shouldEqual <| List.replicate 2 initValue
+    member t.``For random n between 1..10 "factoriels" and "cachedFactoriels" functions should be equal`` () =          
+        List.iter (fun _ ->
+            let randomNum = rand.Next(1, 10)
+            let initValue = Seq.item randomNum factoriels
+            let factorielsFuncs = [cachedFactoriels;cachedFactoriels2;cachedFactoriels3] 
+            let length = List.length factorielsFuncs
+
+            List.map (Seq.item randomNum) factorielsFuncs 
+                |> shouldEqual <| 
+                List.replicate length initValue
+        ) [1..10]
 
 // Test sublist
 [<TestFixture>]

@@ -77,4 +77,4 @@ type ``Test approximateExpFunction``() =
             let approxsExp2 = approximateExpFunction generateSeqOfApproximations2 num eps           
 
             approxsExp1 |> shouldEqual <| approxsExp2
-        ) [1..30]       
+        ) [1..15]       

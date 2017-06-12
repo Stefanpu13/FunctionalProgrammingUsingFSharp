@@ -42,6 +42,19 @@ module E =
             Some (currentNum * prevFact, (currentNum * prevFact,   currentNum + 1 ))) (1, 1)      
     }    
 
+    // Solution to exercise 11.11
+    let cachedFactoriels3 = seq {
+        let rec cachedFactoriels3 prev curr = seq{
+            yield prev * curr
+            yield! cachedFactoriels3 (prev * curr) (curr + 1)
+        }
+
+        yield 1
+        yield! cachedFactoriels3 1 1
+    }
+
+    cachedFactoriels3
+
     // Seq.item 5 cachedFactoriels2
     // Seq.iter (fun it ->
     //     Seq.iter (fun i -> (Seq.item i cachedFactoriels2) |> ignore) [1..13]) [1..100000]
