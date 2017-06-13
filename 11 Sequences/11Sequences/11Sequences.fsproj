@@ -53,6 +53,7 @@
     <Compile Include="11Sequences - Exercises - 10.fs" />
     <Compile Include="11Sequences - Exercises - 10 - Tests.fs" />
     <Compile Include="11Sequences - Exercises - 12.fs" />
+    <Compile Include="11Sequences - Exercises - 12 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>

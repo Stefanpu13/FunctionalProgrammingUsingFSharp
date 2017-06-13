@@ -53,7 +53,7 @@ module E =
         yield! cachedFactoriels3 1 1
     }
 
-    cachedFactoriels3
+    // cachedFactoriels3
 
     // Seq.item 5 cachedFactoriels2
     // Seq.iter (fun it ->

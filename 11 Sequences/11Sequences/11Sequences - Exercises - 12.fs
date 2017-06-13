@@ -108,7 +108,7 @@ module E =
         basis of (11.2).
     *)
 
-    let generateSeqOfApproximations summards = accumulateSeq summards
+    // let generateSeqOfApproximations summards = accumulateSeq summards
     // let generateSeqOfApproximations2 summards = accumulateSeq2 summards
     // let generateSeqOfApproximations3 summards = accumulateSeq3 summards
     let generateSeqOfApproximationsFunc generateSummandsFunc accumulateSeqFunc = 
@@ -168,7 +168,7 @@ module E =
     let generateSeqOfApproximations1 = generateSeqOfApproximationsFunc generateSummands accumulateSeq 
     let generateSeqOfApproximations2 = generateSeqOfApproximationsFunc generateSummands2 accumulateSeq2
     let generateSeqOfApproximations3 = generateSeqOfApproximationsFunc generateSummands2 accumulateSeq3
-    
+
     approximateExpFunction generateSeqOfApproximations1 64.0 1E-6
     approximateExpFunction generateSeqOfApproximations2 68.0 1E-6
     approximateExpFunction generateSeqOfApproximations3 68.0 1E-6
