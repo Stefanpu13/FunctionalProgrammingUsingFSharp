@@ -110,10 +110,6 @@ module E =
         type Colour = Colour of Country list
         type Colouring = Colouring of Colour list
         let colMap m = 
-            let rec isMember x = function
-                | y::ys -> x=y || (isMember x ys)
-                | [] -> false
-
             let areNb country1 country2 = 
                 let rec areNb = function
                 | Map [] -> false
@@ -125,22 +121,30 @@ module E =
                 
                 areNb m
 
-            let rec canBeExtBy color country =
-                match color with
+            let rec canBeExtendedBy countries country =
+                match countries with
                 | Colour [] -> true
-                | Colour (country'::col') -> not(areNb country' country) && canBeExtBy (Colour col') country 
+                | Colour (country'::countries) -> 
+                    // List.forall (fun country' -> not(areNb country' country)) (country'::countries)
+                    not(areNb country' country) && canBeExtendedBy (Colour countries) country 
 
-            let rec extColouring cols country =
+            let rec extendColouring cols country =
                 match cols with
                 | Colouring [] -> Colouring[ Colour [country] ]            
                 | Colouring (col::cols') -> 
-                    if canBeExtBy col country
+                    if canBeExtendedBy col country
                     then                
                         let (Colour countryCols) = col 
                         Colouring ((Colour (country::countryCols))::cols')
                     else 
-                        let (Colouring colourings) =  extColouring (Colouring cols') country
+                        let (Colouring colourings) =  extendColouring (Colouring cols') country
                         Colouring (col::colourings) 
+
+            // let rec isMember x = function
+            //     | y::ys -> x=y || (isMember x ys)
+            //     | [] -> false
+
+            let rec isMember x l = List.contains x l
 
             let addElem x ys = if isMember x ys then ys else x::ys
 
@@ -151,7 +155,7 @@ module E =
 
             let rec colCntrs = function
                 | [] -> Colouring []
-                | c::cs -> extColouring (colCntrs cs) c
+                | c::cs -> extendColouring (colCntrs cs) c
 
             colCntrs (countries m)
     
