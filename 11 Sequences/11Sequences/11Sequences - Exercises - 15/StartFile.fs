@@ -1,13 +1,22 @@
 namespace Exercises15
-// open System.Data
+
+open System.Configuration
+open FSharp.Data
+// open FSharp.Data.
+
+
+
+#if INTERACTIVE
+#r "../../packages/SQLProvider/lib/FSharp.Data.SqlProvider.dll"
+#endif
+
+// open FSharp.Data.Sql
+open System.Data
+open System.Data.SqlClient
 
 module Startup = 
-    open System.Configuration
-    open System.Data
-    open System.Data.SqlClient
-
     // open Repository
-    
+   
     let connString = @"Data Source=.;
         Initial Catalog=Register;
         Integrated Security=True"
@@ -17,6 +26,21 @@ module Startup =
         conn.Open()
         let comm = new SqlCommand(s, conn, CommandTimeout = 10)
         comm.ExecuteNonQuery() |> ignore
+
+    let execQuery s =
+        use conn  = new SqlConnection (connString)
+        conn.Open()
+        let comm = new SqlCommand(s, conn, CommandTimeout = 10)
+        use reader = comm.ExecuteReader() 
+        (seq{
+            while reader.Read() do
+                let row = seq {
+                    for i in 0..reader.FieldCount - 1 do
+                        yield reader.GetName(i), reader.GetValue(i)
+                }
+                yield row |> List.ofSeq
+        }) |> List.ofSeq
+
         
     let executeScalar s = 
         use conn  = new SqlConnection (connString)
@@ -50,27 +74,3 @@ module Startup =
                 "
 
 
-    // let connString1 = @"Data Source=.;
-    // Initial Catalog=ProductRegister;
-    // Integrated Security=True"
-    // let conn1 = new SqlConnection(connString1)
-    // conn1.Open()
-    // // let execNonQuery conn s =
-    // //     let comm = new SqlCommand(s, conn, CommandTimeout = 10)
-    // //     comm.ExecuteNonQuery() |> ignore
-
-    // execNonQuery conn1 "CREATE TABLE Part (
-    // PartId int NOT NULL,
-    // PartName varchar(50) NOT NULL,
-    // IsBasic bit NOT NULL,
-    // PRIMARY KEY (PartId))"
-    // execNonQuery conn1 "CREATE TABLE PartsList (
-    // PartsListId int NOT NULL,
-    // PartId int NOT NULL,
-    // Quantity int NOT NULL,
-    // PRIMARY KEY (PartsListId, PartId))"
-
-    init()
-    // conn
-
-// Startup.init()
