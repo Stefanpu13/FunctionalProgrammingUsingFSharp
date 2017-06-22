@@ -2,24 +2,43 @@ namespace Exercises15
 
 open System.Configuration
 open FSharp.Data
-// open FSharp.Data.
-
-
 
 #if INTERACTIVE
-#r "../../packages/SQLProvider/lib/FSharp.Data.SqlProvider.dll"
+#r "FSharp.Data.TypeProviders"
+#endif
+open Microsoft.FSharp.Data.TypeProviders
+
+open Microsoft.FSharp.Linq
+open System.Data
+
+open Models
+
+#if INTERACTIVE
+#r "System.Data.Linq"
 #endif
 
-// open FSharp.Data.Sql
-open System.Data
+open System.Data.Linq
 open System.Data.SqlClient
 
-module Startup = 
-    // open Repository
+module Startup =     
+    type DbSchema = SqlDataConnection<"Data Source=.;
+        Initial Catalog=Register;
+        Integrated Security=True">
+    let db = DbSchema.GetDataContext()
+   
+
+    let articles = query {
+        for row in db.Register1 do
+            select row
+       }
+
+    let x =  articles |> Seq.map (fun r ->
+         (r.ArticleCode, (r.ArticleName, (Price r.Price)))) |> List.ofSeq |> Register
    
     let connString = @"Data Source=.;
         Initial Catalog=Register;
-        Integrated Security=True"
+        Integrated Security=True";
+
 
     let execNonQuery s =
         use conn  = new SqlConnection (connString)
@@ -72,5 +91,8 @@ module Startup =
                     ArticleName varchar(50) NOT NULL,             
                     Price int NOT NULL)
                 "
+
+
+    init ()
 
 

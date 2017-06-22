@@ -2,7 +2,7 @@ redirects: on
 source https://www.nuget.org/api/v2
 nuget FAKE
 nuget FSharp.Core
-nuget SQLProvider
 nuget FsUnit
 
 nuget NUnit.Console
+nuget SQLProvider
