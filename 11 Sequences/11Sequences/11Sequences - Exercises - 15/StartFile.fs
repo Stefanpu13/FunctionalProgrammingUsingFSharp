@@ -1,52 +1,20 @@
 namespace Exercises15
 
-open System.Configuration
-open FSharp.Data
-
-#if INTERACTIVE
-#r "FSharp.Data.TypeProviders"
-#endif
-open Microsoft.FSharp.Data.TypeProviders
-
-open Microsoft.FSharp.Linq
-open System.Data
-
-open Models
-
-#if INTERACTIVE
-#r "System.Data.Linq"
-#endif
-
-open System.Data.Linq
 open System.Data.SqlClient
 
-module Startup =     
-    type DbSchema = SqlDataConnection<"Data Source=.;
-        Initial Catalog=Register;
-        Integrated Security=True">
-    let db = DbSchema.GetDataContext()
-   
-
-    let articles = query {
-        for row in db.Register1 do
-            select row
-       }
-
-    let x =  articles |> Seq.map (fun r ->
-         (r.ArticleCode, (r.ArticleName, (Price r.Price)))) |> List.ofSeq |> Register
-   
-    let connString = @"Data Source=.;
+module Startup = 
+    let private connString = @"Data Source=.;
         Initial Catalog=Register;
         Integrated Security=True";
 
 
-    let execNonQuery s =
+    let private execNonQuery s =
         use conn  = new SqlConnection (connString)
         conn.Open()
         let comm = new SqlCommand(s, conn, CommandTimeout = 10)
         comm.ExecuteNonQuery() |> ignore
 
-    let execQuery s =
+    let private execQuery s =
         use conn  = new SqlConnection (connString)
         conn.Open()
         let comm = new SqlCommand(s, conn, CommandTimeout = 10)
@@ -61,36 +29,40 @@ module Startup =
         }) |> List.ofSeq
 
         
-    let executeScalar s = 
+    let private executeScalar s = 
         use conn  = new SqlConnection (connString)
         conn.Open()
         let comm = new SqlCommand(s, conn, CommandTimeout = 10)
         comm.ExecuteScalar ()     
-    let init ()= 
+        
+    let init ()=         
+        let ifTableExsitsQuery tableName = "
+                IF (EXISTS (SELECT * 
+                        FROM INFORMATION_SCHEMA.TABLES 
+                        WHERE TABLE_SCHEMA = 'dbo' 
+                		AND TABLE_CATALOG ='Register'
+                        AND  TABLE_NAME = '" + tableName + "'))
 
-        let ifRegisterTableExists = "
-            IF (EXISTS (SELECT * 
-                    FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_SCHEMA = 'dbo' 
-            		AND TABLE_CATALOG ='Register'
-                    AND  TABLE_NAME = 'Register'))
-
-                Select 1
-            ELSE
-                Select 0
-            "
-        let tableExists = ((executeScalar ifRegisterTableExists) :?> int) = 1
-
-        if not tableExists
-        then
-        (*If table does not exist, create it*)
-            execNonQuery "
-                CREATE TABLE Register (
-                    ID int primary key IDENTITY(1,1) NOT NULL,
-                    ArticleCode varchar(50) NOT NULL,
-                    ArticleName varchar(50) NOT NULL,             
-                    Price int NOT NULL)
+                    Select 1
+                ELSE
+                    Select 0
                 "
+        let tableExists ifTableExsitsQuery = ((executeScalar ifTableExsitsQuery) :?> int) = 1            
+
+        let createRegisterTable () = 
+            let ifRegisterTableExists = ifTableExsitsQuery "Register"
+
+            if not (tableExists ifRegisterTableExists)
+            then
+            (*If table does not exist, create it*)
+                execNonQuery "
+                    CREATE TABLE Register (
+                        ID int primary key IDENTITY(1,1) NOT NULL,
+                        ArticleCode varchar(50) NOT NULL,
+                        ArticleName varchar(50) NOT NULL,             
+                        Price int NOT NULL)
+                    "
+        createRegisterTable ()
 
 
     init ()
