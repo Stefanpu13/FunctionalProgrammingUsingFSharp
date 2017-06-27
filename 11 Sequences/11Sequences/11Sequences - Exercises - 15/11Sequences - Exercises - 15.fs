@@ -21,6 +21,16 @@ module E =
     //         ( "a3",( "soft drink",Price 5)) 
     //     ]    
 
+    let rec private findArticle ac = function
+    | Register ((ac',adesc)::_) when ac=ac' -> adesc
+    | Register (_::reg) -> findArticle ac (Register reg)
+    | _ -> failwith(ac + " is an unknown article code")
+
+    let private findArticle2 ac (Register reg) =
+        match List.tryFind (fun (ac', _ ) -> ac=ac') reg with
+        | Some (_,adesc) -> adesc
+        |None -> failwith(ac + " is an unknown article code")
+
     
     let makeBill purchase =
         let reg = Repository.getRegister ()

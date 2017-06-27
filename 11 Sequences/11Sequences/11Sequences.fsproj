@@ -994,6 +994,7 @@
     <Compile Include="11Sequences - Exercises - 15/11Sequences - Exercises - 15.fs" />
     <Compile Include="11Sequences - Exercises - 15/StartFile.fs" />
     <Compile Include="11Sequences - Exercises - 15/Client.fs" />
+    <Compile Include="11Sequences - Exercises - 15/11Sequences - Exercises - 15 - Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

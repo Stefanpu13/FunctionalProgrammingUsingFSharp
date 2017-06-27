@@ -5,7 +5,6 @@ open Models
 open E
 
 module Client = 
-    Startup.init()
 
     let purchase =
         Purchase [
