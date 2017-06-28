@@ -17,6 +17,7 @@ open FsUnitTyped
 open Exercises15
 open System
 open Models
+open E
 
 let rand = Random ()
 
@@ -36,18 +37,56 @@ type ``Test adding articles to db``() =
     member t.``One added product should be found`` () = 
         let brd = ("brd", ("Bread", Price 10))
         Repository.addArticle brd
-        Repository.findArticle "brd" |> shouldEqual <| (seq [brd])
+        Repository.findArticle "brd" |> shouldEqual <| Some brd
 
-    [<Test>]
-    
+    [<Test>]    
     member t.``Adding product with same code more than once should not change db`` () = 
         let brd = ("brd", ("Bread", Price 10))
         Repository.addArticle brd
-        Repository.findArticle "brd" |> shouldEqual <| (seq [brd])
+        Repository.findArticle "brd" |> shouldEqual <| Some brd
 
         Repository.addArticle brd
-        Repository.findArticle "brd" |> shouldEqual <| (seq [brd])
+        Repository.findArticle "brd" |> shouldEqual <| Some brd
 
         let brd2 = ("brd", ("Bread2", Price 12))
         Repository.addArticle brd2
-        Repository.findArticle "brd" |> shouldEqual <| (seq [brd])
+        Repository.findArticle "brd" |> shouldEqual <| Some brd
+
+
+    [<Test>]    
+    member t.``Non existent products in Bill should be ignored`` () = 
+        let brd = ("brd", ("Bread", Price 10))
+        let mlk = ("mlk", ("Milk", Price 14))
+
+        Repository.addArticle brd
+        Repository.addArticle mlk
+
+        let purchase = 
+            Purchase [
+                Item (NoPieces 2, "brd")
+                Item (NoPieces 1, "clr")
+        ]
+
+        let (Bill (_, Price p)) =  makeBill purchase 
+
+        p |> shouldEqual <| 20
+        
+
+    [<Test>]    
+    member t.``A purchase of 3 * 14 + 1 * 12 + 2 * 17, should equal 88 `` () = 
+        let brd = ("brd", ("Bread", Price 12))
+        let mlk = ("mlk", ("Milk", Price 14))
+        let chkn = ("chkn", ("Chiken", Price 17))
+
+        [brd;mlk;chkn] |> List.iter Repository.addArticle        
+
+        let purchase = 
+            Purchase [
+                Item (NoPieces 1, "brd")
+                Item (NoPieces 3, "mlk")
+                Item (NoPieces 2, "chkn")
+        ]
+
+        let (Bill (_, Price p)) =  makeBill purchase 
+
+        p |> shouldEqual <| 88

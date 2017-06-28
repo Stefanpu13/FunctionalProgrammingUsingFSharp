@@ -16,11 +16,3 @@ module Models =
     type Info =  NoPieces * ArticleName * Price
     type Infoseq =  Info list
     type Bill = Bill of Infoseq * Price
-
-    (* Tables
-
-    Register
-    ArticleCode: string
-    ArticleName: string
-    Price: int
-    *)

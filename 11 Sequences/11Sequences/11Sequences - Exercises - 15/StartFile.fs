@@ -23,8 +23,3 @@ module Startup =
         let deleteTableContents = "
             Truncate table Register.[dbo]." + tableName
         execNonQuery connString deleteTableContents
-
-    // deleteAllRecords "Register"
-  
-
- 

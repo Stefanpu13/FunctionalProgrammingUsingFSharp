@@ -7,6 +7,7 @@ open Models
 #endif
 open Microsoft.FSharp.Data.TypeProviders
 
+open System
 open Microsoft.FSharp.Linq
 
 module Repository = 
@@ -23,19 +24,23 @@ module Repository =
         try            
             db.DataContext.SubmitChanges()            
         with
-        | exn -> raise exn
+        | exn -> 
+            raise exn
 
-    let findArticle ac =         
-        query {
-            for row in db.Register1 do
-                where (row.ArticleCode=ac) 
-        } 
-            |> Seq.map (fun art -> 
-                art.ArticleCode, (art.ArticleName, Price art.Price))
+    let findArticle ac =     
+        try    
+            let article =  query {
+                for row in db.Register1 do
+                    find (row.ArticleCode=ac) 
+            } 
 
+            Some (article.ArticleCode, (article.ArticleName, Price article.Price))
+            with 
+            | :? InvalidOperationException -> None
+    
     let addArticle (ac, (an, (Price p))) =        
-        match findArticle ac |> List.ofSeq with
-        | [] ->
+        match findArticle ac with
+        | None ->
             let newArticle = 
                 DbSchema.ServiceTypes.Register1(
                     ArticleCode = ac,
@@ -45,7 +50,7 @@ module Repository =
             
             db.Register1.InsertOnSubmit(newArticle)
             submit()
-        | _ ->         
+        | Some _ ->         
             ()
     
     let getRegister () =
@@ -58,6 +63,5 @@ module Repository =
         let register =  articles |> Seq.map (fun r ->
             (r.ArticleCode, (r.ArticleName, (Price r.Price)))) |> List.ofSeq |> Register
 
-        register 
-      
+        register      
     
