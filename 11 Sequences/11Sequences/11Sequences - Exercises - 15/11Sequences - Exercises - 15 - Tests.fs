@@ -18,8 +18,23 @@ open Exercises15
 open System
 open Models
 open E
+open System.Data.SqlClient
 
-let rand = Random ()
+let private connString = @"Data Source=.;        
+    Initial Catalog=Register;
+    Integrated Security=True"
+
+let private execNonQuery connString s =
+    use conn  = new SqlConnection (connString)        
+    conn.Open()
+    let comm = new SqlCommand(s, conn, CommandTimeout = 10)
+    comm.ExecuteNonQuery() |> ignore           
+
+let deleteAllRecords tableName = 
+    let deleteTableContents = "
+        Truncate table Register.[dbo]." + tableName
+    execNonQuery connString deleteTableContents
+
 
 // Test adding articles to db
 [<TestFixture>]
@@ -28,7 +43,7 @@ type ``Test adding articles to db``() =
     // Before each test
     [<SetUp>]
     member t.Init () =         
-        Startup.deleteAllRecords "Register" 
+        deleteAllRecords "Register" 
         Repository.reInit()   
 
 

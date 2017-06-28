@@ -35,8 +35,9 @@ module Repository =
             } 
 
             Some (article.ArticleCode, (article.ArticleName, Price article.Price))
-            with 
-            | :? InvalidOperationException -> None
+        with 
+        | :? InvalidOperationException -> 
+            None
     
     let addArticle (ac, (an, (Price p))) =        
         match findArticle ac with
