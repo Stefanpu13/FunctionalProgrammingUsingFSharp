@@ -9,6 +9,13 @@ module Models =
 
     type Reading = Poetry|SciFi|Magazines|Novels|``Techincal Literature``
 
+    type InterestType = Sport of Sport|Music of Music|Reading of Reading
+
+    let getInterestTypeName = function
+    | Sport _-> "Sport"
+    | Music _-> "Music"
+    | Reading _ -> "Reading" 
+
     type ThemesOfInterest = {
         Sports: Sport list;
         Music: Music list; 
@@ -20,4 +27,5 @@ module Models =
         TelephoneNum:string option; 
         Sex:Sex; 
         YearOfBirth:int; 
-        ThemesOfInterest: ThemesOfInterest option        }
+        ThemesOfInterest: ThemesOfInterest option        
+        }

@@ -1,8 +1,86 @@
 namespace Exercise16
 open Models
 
+#if INTERACTIVE
+#r "FSharp.Data.TypeProviders"
+#endif
+open Microsoft.FSharp.Data.TypeProviders
+
+open System
+open Microsoft.FSharp.Linq
+
 module Repository = 
+    type DbSchema = SqlDataConnection<"Data Source=.;
+        Initial Catalog=DatingBureau;
+        Integrated Security=True">
+
+    let mutable private db = DbSchema.GetDataContext()
     let private rand = System.Random()
+
+    let reInit () =
+        db.DataContext.Dispose()
+        db <- DbSchema.GetDataContext()  
+
+    let private submit () = 
+        try            
+            db.DataContext.SubmitChanges()            
+        with
+        | exn -> 
+            raise exn
+    let getInterestTypes () =     
+        query {
+            for row in db.InterestType do
+                select row
+        }
+    let addInterestType interestType = 
+        let interestTypeName = getInterestTypeName interestType
+        let newInterestType = 
+            DbSchema.ServiceTypes.InterestType(
+                Name = interestTypeName
+            )
+
+        db.InterestType.InsertOnSubmit(newInterestType)        
+        submit()
+
+    let addInterest interestType =         
+        let interestName = 
+            match interestType with
+            | Sport s ->             
+                match s with
+                | Football -> "Football"
+                | Tenis -> "Tenis"
+                | Baseball -> "Baseball"
+                | TableTenis -> "TableTenis"
+                | Basketball -> "Basketball"                
+            | Music m ->                 
+                match m with
+                |Jazz ->"Jazz"
+                |Rock -> "Rock"
+                |Pop -> "Pop"
+                |Salsa -> "Salsa"
+                |HipHop -> "HipHop"
+                |``Classical Music`` -> "Classical Music"
+            | Reading r ->             
+                match r with
+                |Poetry -> "Poetry"
+                |SciFi -> "SciFi"
+                |Magazines -> "Magazines"
+                |Novels -> "Novels"
+                |``Techincal Literature`` -> "Techincal Literature"       
+
+        let interestTypes = getInterestTypes () |> List.ofSeq
+        let interestDb = 
+            DbSchema.ServiceTypes.Interest(
+                Name=interestName,
+                InterestType = 
+                    List.find (fun intrType -> intrType.Name = getInterestTypeName interestType) interestTypes
+            )        
+        db.Interest.InsertOnSubmit(interestDb)
+
+    addInterestType (Sport Football)
+    addInterest (Sport Football)
+
+
     let private womenNames = [
         "MARY"; "PATRICIA"; "LINDA"; "BARBARA"; "ELIZABETH"; 
         "JENNIFER"; "MARIA"; "SUSAN"; "MARGARET"; "DOROTHY"; "LISA"; 

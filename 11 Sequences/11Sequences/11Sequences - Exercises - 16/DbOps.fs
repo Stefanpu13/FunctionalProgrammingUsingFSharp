@@ -72,7 +72,7 @@ module DbOps =
                     CREATE TABLE Interest (
                         InterestId int primary key IDENTITY(1,1) NOT NULL,                            
                         Name varchar(50) NOT NULL,             
-                        InterestTypeId int FOREIGN KEY REFERENCES InterestType(InterestTypeId)
+                        InterestTypeId int FOREIGN KEY REFERENCES InterestType(InterestTypeId) NOT NULL
                         )
                     "        
 
@@ -100,11 +100,11 @@ module DbOps =
                         ClientId int primary key IDENTITY(1,1) NOT NULL,
                         Name varchar(50) NOT NULL,
                         TelephoneNum varchar(50) NULL,
-                        SexId int FOREIGN KEY REFERENCES Sex(SexId),
+                        SexId int FOREIGN KEY REFERENCES Sex(SexId) NOT NULL,
                         YearOfBirth int NOT NULL
                         )
                     "
-                    
+
         let createClientInterestTable () = 
             let ifClientInterestTableExists = ifTableExsitsQuery "DatingBureau" "ClientInterest"
 
@@ -114,8 +114,8 @@ module DbOps =
                 execNonQuery "
                     CREATE TABLE ClientInterest (
                         ClientInterestId int primary key IDENTITY(1,1) NOT NULL,                        
-                        ClientId int FOREIGN KEY REFERENCES Client(ClientId),
-                        InterestId int FOREIGN KEY REFERENCES Interest(InterestId),
+                        ClientId int FOREIGN KEY REFERENCES Client(ClientId) NOT NULL,
+                        InterestId int FOREIGN KEY REFERENCES Interest(InterestId) NOT NULL,
                         )
                     "                  
                 
