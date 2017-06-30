@@ -8,11 +8,13 @@ open Microsoft.FSharp.Data.TypeProviders
 
 open System
 open Microsoft.FSharp.Linq
+open Microsoft.FSharp.Reflection
 
 module Repository = 
     type DbSchema = SqlDataConnection<"Data Source=.;
         Initial Catalog=DatingBureau;
         Integrated Security=True">
+    type SchemaTypes = DbSchema.ServiceTypes
 
     let mutable private db = DbSchema.GetDataContext()
     let private rand = System.Random()
@@ -31,54 +33,93 @@ module Repository =
         query {
             for row in db.InterestType do
                 select row
-        }
-    let addInterestType interestType = 
-        let interestTypeName = getInterestTypeName interestType
-        let newInterestType = 
-            DbSchema.ServiceTypes.InterestType(
-                Name = interestTypeName
-            )
+        } |> List.ofSeq
 
-        db.InterestType.InsertOnSubmit(newInterestType)        
-        submit()
+    let getInterests interestTypeName =     
+        query {
+            for row in db.Interest do
+                where (row.InterestType.Name = interestTypeName)
+                select row
+        } |> List.ofSeq    
 
-    let addInterest interestType =         
-        let interestName = 
+    let private findInterestType name = 
+        try    
+            let interest =  query {
+                for row in db.InterestType do
+                    find (row.Name=name) 
+            } 
+
+            Some interest
+        with 
+        | :? InvalidOperationException -> 
+            None
+
+    let private findClient clientId = 
+        try    
+            let client =  query {
+                for row in db.Client do
+                    find (row.ClientId=clientId) 
+            } 
+
+            Some client
+        with 
+        | :? InvalidOperationException -> 
+            None
+
+
+    let private findInterest name = 
+        try    
+            let interest =  query {
+                for row in db.Interest do
+                    find (row.Name=name) 
+            } 
+
+            Some interest
+        with 
+        | :? InvalidOperationException -> 
+            None
+
+    let rec addInterest interestType = 
+        let interestTypeName, interestName = 
             match interestType with
-            | Sport s ->             
-                match s with
-                | Football -> "Football"
-                | Tenis -> "Tenis"
-                | Baseball -> "Baseball"
-                | TableTenis -> "TableTenis"
-                | Basketball -> "Basketball"                
-            | Music m ->                 
-                match m with
-                |Jazz ->"Jazz"
-                |Rock -> "Rock"
-                |Pop -> "Pop"
-                |Salsa -> "Salsa"
-                |HipHop -> "HipHop"
-                |``Classical Music`` -> "Classical Music"
-            | Reading r ->             
-                match r with
-                |Poetry -> "Poetry"
-                |SciFi -> "SciFi"
-                |Magazines -> "Magazines"
-                |Novels -> "Novels"
-                |``Techincal Literature`` -> "Techincal Literature"       
+            | Sport s-> "Sport", s
+            | Music m -> "Music", m
+            | Reading r -> "Reading", r
+            
+        match findInterestType interestTypeName, findInterest interestName with
+        | Some interestType, None -> 
+            let newInterest = 
+                DbSchema.ServiceTypes.Interest(
+                    Name = interestName,
+                    InterestTypeId = interestType.InterestTypeId                    
+                )
 
-        let interestTypes = getInterestTypes () |> List.ofSeq
-        let interestDb = 
-            DbSchema.ServiceTypes.Interest(
-                Name=interestName,
-                InterestType = 
-                    List.find (fun intrType -> intrType.Name = getInterestTypeName interestType) interestTypes
-            )        
-        db.Interest.InsertOnSubmit(interestDb)
+            db.Interest.InsertOnSubmit(newInterest) 
+            submit()
+        | None, _ -> 
+            invalidArg "InterestType" (sprintf "Interest type not found: %s" interestTypeName)
+        | _ , Some interest -> 
+            ()             
 
-    addInterestType (Sport Football)
-    addInterest (Sport Football)
+        
+
+    let x = FSharpValue.GetUnionFields (Male, typedefof<Sex>) |> (fun (a, b) ->
+        a.Name
+     )
+    let addClient (client:Client) = 
+        // let x = FSharpValue.GetUnionFields (client.Sex, typedefof<Sex>) |> (fun (a, _) ->
+        //     a.Name
+        //  )
+        // let newClient = 
+        //     DbSchema.ServiceTypes.Client (
+        //         Name=client.Name,
+        //         TelephoneNum=client.TelephoneNum,
+        //         Sex=x
+
+        //     )
+        ()
+
+    addInterest (Sport "Football")
 
 
     let private womenNames = [
