@@ -49,15 +49,15 @@ module DbOps =
     let tableExists ifTableExsitsQuery = ((executeScalar ifTableExsitsQuery) :?> int) = 1   
 
     let createTables () =         
-        let createInterestTypeTable () = 
-            let ifInterestTypeTableExists = ifTableExsitsQuery "DatingBureau" "InterestType"
+        let createInterestCategoryTable () = 
+            let ifInterestTypeTableExists = ifTableExsitsQuery "DatingBureau" "InterestCategory"
 
             if not (tableExists ifInterestTypeTableExists)
             then
             (*If table does not exist, create it*)
                 execNonQuery "
-                    CREATE TABLE InterestType (
-                        InterestTypeId int primary key IDENTITY(1,1) NOT NULL,                            
+                    CREATE TABLE InterestCategory (
+                        InterestCategoryId int primary key IDENTITY(1,1) NOT NULL,                            
                         Name varchar(50) NOT NULL
                         )                            
                     "
@@ -72,7 +72,7 @@ module DbOps =
                     CREATE TABLE Interest (
                         InterestId int primary key IDENTITY(1,1) NOT NULL,                            
                         Name varchar(50) NOT NULL,             
-                        InterestTypeId int FOREIGN KEY REFERENCES InterestType(InterestTypeId) NOT NULL
+                        InterestCategoryId int FOREIGN KEY REFERENCES InterestCategory(InterestCategoryId) NOT NULL
                         )
                     "        
 
@@ -119,7 +119,7 @@ module DbOps =
                         )
                     "                  
                 
-        createInterestTypeTable ()             
+        createInterestCategoryTable ()             
         createInterestTable ()
         createSexTable ()
         createClientTable ()

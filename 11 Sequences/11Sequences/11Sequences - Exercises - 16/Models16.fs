@@ -1,7 +1,7 @@
 namespace Exercise16
 
 module Models = 
-    type Sex = Male|Female|Other
+    type Sex = Male = 1|Female = 2|Other = 3
 
     // type Sport = Football|Tenis|Baseball|TableTenis|Basketball
 
@@ -14,9 +14,10 @@ module Models =
     type Music = string
 
     type Reading = string
+    type Interest = {Category: string; Name: string}
 
 
-    type InterestType = Sport of Sport|Music of Music|Reading of Reading
+    // type Interest = Sport of Sport|Music of Music|Reading of Reading
 
     // interests and interest types are dynamic
 
@@ -25,16 +26,16 @@ module Models =
     // | Music _-> "Music"
     // | Reading _ -> "Reading" 
 
-    type ThemesOfInterest = {
-        Sports: Sport list;
-        Music: Music list; 
-        Reading: Reading list;
-        }
+    // type ThemesOfInterest = {
+    //     Sports: Sport list;
+    //     Music: Music list; 
+    //     Reading: Reading list;
+    //     }
     type Client = { 
         ClientId: int
         Name:string; 
         TelephoneNum:string; 
         Sex:Sex; 
         YearOfBirth:int; 
-        ThemesOfInterest: ThemesOfInterest option        
+        ThemesOfInterest: Interest list        
         }
