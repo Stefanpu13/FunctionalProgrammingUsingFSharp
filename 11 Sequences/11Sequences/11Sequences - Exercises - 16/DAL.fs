@@ -11,7 +11,7 @@ open System
 open Microsoft.FSharp.Linq
 open Microsoft.FSharp.Reflection
 
-module Repository = 
+module DAL = 
     type DbSchema = SqlDataConnection<"Data Source=.;
         Initial Catalog=DatingBureau;
         Integrated Security=True">
@@ -100,6 +100,29 @@ module Repository =
         submit()
         interest
 
+    let private toClient (dbClient:DbSchema.ServiceTypes.Client) = 
+        {
+            ClientId = dbClient.ClientId;
+            Name=dbClient.Name;
+            YearOfBirth=dbClient.YearOfBirth;
+            Sex = enum dbClient.SexId;
+            TelephoneNum=dbClient.TelephoneNum
+            ThemesOfInterest = 
+                Seq.map (fun (clientInterest:DbSchema.ServiceTypes.ClientInterest) -> 
+                    {
+                        Name= clientInterest.Interest.Name; 
+                        Category=clientInterest.Interest.InterestCategory.Name
+                    }
+                ) dbClient.ClientInterest
+                |> List.ofSeq
+        }    
+
+    let getClientsWithDifferentSex cl =  
+        query{
+            for c in db.Client do
+            where (c.SexId <> int cl.Sex)            
+            select c
+        } |> Seq.map toClient
 
     let addClient (client:Client) = 
         let newClient = 
@@ -122,25 +145,6 @@ module Repository =
         db.ClientInterest.InsertAllOnSubmit(interests)
 
         submit()
-
-    addInterest ({Category= "Dansing"; Name="Bachata"})
-
-    addClient (
-        {
-            ClientId = 0;
-            Name="Stefan2";
-            YearOfBirth=1989;
-            Sex=Sex.Male;
-            TelephoneNum="213123"
-            ThemesOfInterest = 
-            [
-                {
-                    Category="Sport";
-                    Name="Baseball"
-                }
-            ] 
-        }
-    )
 
     let private womenNames = [
         "MARY"; "PATRICIA"; "LINDA"; "BARBARA"; "ELIZABETH"; 
