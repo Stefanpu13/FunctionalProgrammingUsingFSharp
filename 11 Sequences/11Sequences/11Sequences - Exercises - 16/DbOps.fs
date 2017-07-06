@@ -89,6 +89,13 @@ module DbOps =
                         )
                     "
 
+            execNonQuery "
+                INSERT INTO Sex 
+                VALUES 
+                    ('Male'),
+                    ('Female'),
+                    ('Other');
+            "
         let createClientTable () = 
             let ifRegisterTableExists = ifTableExsitsQuery "DatingBureau" "Client"
 
