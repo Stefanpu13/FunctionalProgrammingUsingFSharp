@@ -996,6 +996,7 @@
     <Compile Include="11Sequences - Exercises - 16/Models16.fs" />    
     <Compile Include="11Sequences - Exercises - 16/DAL.fs" />    
     <Compile Include="11Sequences - Exercises - 16/DatingBureauAPI.fs" />
+    <Compile Include="11Sequences - Exercises - 16/11Sequences - Exercises - 16 - Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
