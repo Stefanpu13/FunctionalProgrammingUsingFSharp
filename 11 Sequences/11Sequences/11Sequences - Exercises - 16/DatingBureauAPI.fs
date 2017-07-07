@@ -35,21 +35,21 @@ module API =
         DAL.getClientsWithDifferentSex cl1 
         |> Seq.filter (fun cl2 -> areMatching cl1 cl2)    
 
-module Client = 
-    let cl =
-        {
-            ClientId = 0;
-            Name="Stefan2";
-            YearOfBirth=1989;
-            Sex = enum 1;
-            TelephoneNum="213123"
-            ThemesOfInterest = 
-            [
-                {
-                    Category="Sport";
-                    Name="Baseball"
-                }
-            ] 
-        }
+// module Client = 
+//     let cl =
+//         {
+//             ClientId = 0;
+//             Name="Stefan2";
+//             YearOfBirth=1989;
+//             Sex = enum 1;
+//             TelephoneNum="213123"
+//             ThemesOfInterest = 
+//             [
+//                 {
+//                     Category="Sport";
+//                     Name="Baseball"
+//                 }
+//             ] 
+//         }
 
-    API.getMatchingClients cl
+//     // API.getMatchingClients cl

@@ -106,13 +106,6 @@ type ``Test Client matching``() =
             3. Create male client to match against
             4. Match client and check if list of matches is empty
         *)
-        // let x = 
-        // [("Sport", ["Football"; "Golf"; "Tenis"]); ("Music", ["Rock"; "Pop"])] 
-        // |> List.iter (fun (cat, intr) ->             
-        //     List.map ((fun interest -> 
-        //         {Name=interest;Category=cat}) >> addInterest
-        //     ) intr |> ignore 
-        // )
 
         let clients = [
             {

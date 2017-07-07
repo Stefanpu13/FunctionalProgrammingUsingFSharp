@@ -80,11 +80,11 @@ module DAL =
                 DbSchema.ServiceTypes.InterestCategory(
                     Name=interestCategoryName
                 )
-            db.InterestCategory.InsertOnSubmit(newInterestCategory)
+            db.InterestCategory.InsertOnSubmit(newInterestCategory)            
             newInterestCategory
 
     let rec addInterest interest = 
-        let interestCategory = addInterestCategory(interest.Category)
+        let interestCategory = addInterestCategory(interest.Category)        
         let interest = 
             match findInterest interest.Name with 
             | Some i -> i
@@ -92,7 +92,7 @@ module DAL =
                 let newInterest = 
                     DbSchema.ServiceTypes.Interest(
                         Name=interest.Name,
-                        InterestCategory = interestCategory
+                        InterestCategory = interestCategory                        
                     )
                 db.Interest.InsertOnSubmit(newInterest)
                 newInterest
@@ -140,9 +140,7 @@ module DAL =
                     DbSchema.ServiceTypes.ClientInterest(
                         Interest=interest,
                         Client=newClient
-                    ))) client.ThemesOfInterest
-
-        db.ClientInterest.InsertAllOnSubmit(interests)
+                    ))) client.ThemesOfInterest        
 
         submit()
 
