@@ -143,19 +143,3 @@ module DAL =
                     ))) client.ThemesOfInterest        
 
         submit()
-
-    let private womenNames = [
-        "MARY"; "PATRICIA"; "LINDA"; "BARBARA"; "ELIZABETH"; 
-        "JENNIFER"; "MARIA"; "SUSAN"; "MARGARET"; "DOROTHY"; "LISA"; 
-        "NANCY"; "KAREN"; "BETTY"; "HELEN"; "SANDRA"; "DONNA"; "CAROL";
-        "RUTH"; "SHARON"; "MICHELLE"; "LAURA"; "SARAH"; "KIMBERLY"; "DEBORAH";
-        "JESSICA"; "SHIRLEY"; "CYNTHIA"; "ANGELA"; "MELISSA";
-        ]
-
-    let private menNames = [
-        "JAMES"; "JOHN"; "ROBERT"; "MICHAEL";
-        "WILLIAM"; "DAVID"; "RICHARD"; "CHARLES"; "JOSEPH"; "THOMAS";
-        "CHRISTOPHER"; "DANIEL"; "PAUL"; "MARK"; "DONALD"; "GEORGE";
-        "KENNETH"; "STEVEN"; "EDWARD"; "BRIAN"; "RONALD"; "ANTHONY";
-        "KEVIN"; "JASON"; "MATTHEW"; "GARY"; "TIMOTHY"; "JOSE"; "LARRY"; "JEFFREY";
-        ] 

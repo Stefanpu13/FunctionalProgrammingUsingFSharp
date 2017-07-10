@@ -14,42 +14,21 @@ module API =
 
         intersect [] (List.sort l1,List.sort l2)
 
-    let private commonThemes subTheme1 subTheme2 =     
-        match intersect (subTheme1,subTheme2) with
-        | [] -> false
-        | l -> true
+    let private commonThemes subTheme1 subTheme2 = 
+        (intersect >> List.isEmpty >> not) (subTheme1,subTheme2)
+        
     let private haveCommonInterests cl1 cl2 =
         let {ThemesOfInterest = themes1} = cl1
         let {ThemesOfInterest = themes2} = cl2
 
         commonThemes themes1 themes2
 
-    let private areMatching client1 client2 = 
-        let areOfDifferentSex = client1.Sex <> client2.Sex
+    let private areMatching client1 client2 =         
         let ageDiffIsLessThan10Years = (abs (client1.YearOfBirth - client2.YearOfBirth)) < 10
         let haveCommonInterests = haveCommonInterests client1 client2 
 
-        areOfDifferentSex && ageDiffIsLessThan10Years && haveCommonInterests
+        ageDiffIsLessThan10Years && haveCommonInterests
         
     let getMatchingClients cl1 = 
         DAL.getClientsWithDifferentSex cl1 
         |> Seq.filter (fun cl2 -> areMatching cl1 cl2)    
-
-// module Client = 
-//     let cl =
-//         {
-//             ClientId = 0;
-//             Name="Stefan2";
-//             YearOfBirth=1989;
-//             Sex = enum 1;
-//             TelephoneNum="213123"
-//             ThemesOfInterest = 
-//             [
-//                 {
-//                     Category="Sport";
-//                     Name="Baseball"
-//                 }
-//             ] 
-//         }
-
-//     // API.getMatchingClients cl
