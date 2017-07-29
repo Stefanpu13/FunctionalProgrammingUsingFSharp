@@ -64,7 +64,7 @@ module E =
         new Button(Location=Point(700,65),MinimumSize=Size(150,50),
             MaximumSize=Size(100,50),Text="Play again?")                    
 
-    let guessButtons = [isSmallerButton;isEqualButton;isLargerButton] 
+    let (guessButtons) = [isSmallerButton;isEqualButton;isLargerButton] 
     let disable bs = 
         for (b:Button) in bs do
             b.Enabled <- false        
@@ -74,26 +74,30 @@ module E =
 
     let ev = AsyncEventQueue()
     let rand = Random()    
+    // To avoid passing 'numToGuess', use mutable binding that 
+    // is accessible to all mutually recursive functions.
+    // let mutable numToGuess = 0
 
-    let rec init ()=
-        let numToGuess = rand.Next(60) 
-        printfn "Number to guess is: %i" numToGuess
+    let rec init () =               
         playAgainButton.Enabled <- false
-        for b in guessButtons do b.Enabled <- true
+        for b in guessButtons 
+            do b.Enabled <- true
+
         myGuessBox.Text <- "30"
         ansBox.Text <- ""        
 
         async {
+            let numToGuess = rand.Next(60) 
             return! waitForGuess numToGuess
         }
-    and smallerOutcome guessedNum numToGuess = 
+    and smallerGuessOutcome guessedNum numToGuess = 
         async{
             let answer = if guessedNum > numToGuess then "yes" else "no"
             ansBox.Text <- answer            
 
             return! waitForGuess numToGuess
         }     
-    and equalOutcome guessedNum numToGuess = 
+    and equalGuessOutcome guessedNum numToGuess = 
         async{
             if guessedNum = numToGuess 
             then 
@@ -103,7 +107,7 @@ module E =
                 ansBox.Text <-"no"
                 return! waitForGuess numToGuess            
         }     
-    and largerOutcome guessedNum numToGuess = 
+    and largerGuessOutcome guessedNum numToGuess = 
         async{
             let answer = if guessedNum < numToGuess then " Yes" else "no"
             ansBox.Text <- answer            
@@ -113,9 +117,9 @@ module E =
     and showOutcome guess numToGuess =   
         async {
             match guess with 
-            | Smaller n -> return! smallerOutcome n numToGuess
-            | Equal n -> return! equalOutcome n numToGuess
-            | Larger n -> return! largerOutcome n numToGuess
+            | Smaller n -> return! smallerGuessOutcome n numToGuess
+            | Equal n -> return! equalGuessOutcome n numToGuess
+            | Larger n -> return! largerGuessOutcome n numToGuess
         }
     and waitForGuess numToGuess = 
         async {
@@ -124,17 +128,16 @@ module E =
         }     
     and endGame () = 
         async{
-            disable [isSmallerButton;isEqualButton;isLargerButton]
+            disable guessButtons
             playAgainButton.Enabled <-true
         }     
 
     // Initialization
-    window.Controls.Add myGuessBox
-    window.Controls.Add ansBox
-    window.Controls.Add isSmallerButton
-    window.Controls.Add isEqualButton
-    window.Controls.Add isLargerButton
-    window.Controls.Add playAgainButton
+    let (controls:Control list) = 
+        [myGuessBox;ansBox;isSmallerButton;isEqualButton;isLargerButton; playAgainButton]
+        
+    List.iter window.Controls.Add controls
+
     isSmallerButton.Click.Add (fun _ -> ev.Post (Smaller (int myGuessBox.Text)))
     isEqualButton.Click.Add (fun _ -> ev.Post (Equal (int myGuessBox.Text)))
     isLargerButton.Click.Add (fun _ -> ev.Post (Larger (int myGuessBox.Text)))
