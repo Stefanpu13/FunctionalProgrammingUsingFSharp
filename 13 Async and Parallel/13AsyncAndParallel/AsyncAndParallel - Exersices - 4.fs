@@ -70,13 +70,10 @@ module E =
             b.Enabled <- false        
 
     // The dialogue part from Table 13.7 belongs here
-    type Message =  
-        | Start of string | Clear | Cancel 
-        | Web of string | Error | Cancelled
+    type Guess = Smaller of int | Equal of int | Larger of int 
 
     let ev = AsyncEventQueue()
-    let rand = Random()
-    
+    let rand = Random()    
 
     let rec init ()=
         let numToGuess = rand.Next(60) 
