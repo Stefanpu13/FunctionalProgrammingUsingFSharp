@@ -9,7 +9,9 @@ module E =
 
     
     let cartesian seqx seqy = 
-        Seq.collect (fun elx -> Seq.map (fun ely -> elx, ely) seqy) seqx
+        Seq.collect (fun elx -> 
+            Seq.map (fun ely -> elx, ely) seqy
+        ) seqx
         
 
     let cartesian2 seqx seqy = seq {
