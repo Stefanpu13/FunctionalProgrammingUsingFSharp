@@ -50,6 +50,7 @@
     <Compile Include="Parallel.fs" />
     <Compile Include="AsyncAndParallel - Exersices - 1.fs" />
     <Compile Include="AsyncAndParallel - Exersices - 2.fs" />
+    <Compile Include="AsyncAndParallel - 4/Exersices.fs" />
     <Compile Include="AsyncAndParallel - Exersices - 1 - Tests.fs" />
   </ItemGroup>
   <PropertyGroup>

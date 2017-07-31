@@ -101,7 +101,7 @@ module E =
         async{
             if guessedNum = numToGuess 
             then 
-                ansBox.Text <- " You guessed it!"
+                ansBox.Text <- "You guessed it!"
                 return! endGame () 
             else 
                 ansBox.Text <-"no"
@@ -133,15 +133,74 @@ module E =
         }     
 
     // Initialization
-    let (controls:Control list) = 
-        [myGuessBox;ansBox;isSmallerButton;isEqualButton;isLargerButton; playAgainButton]
+    // let (controls:Control list) = 
+    //     [myGuessBox;ansBox;isSmallerButton;isEqualButton;isLargerButton; playAgainButton]
         
-    List.iter window.Controls.Add controls
+    // List.iter window.Controls.Add controls
 
-    isSmallerButton.Click.Add (fun _ -> ev.Post (Smaller (int myGuessBox.Text)))
-    isEqualButton.Click.Add (fun _ -> ev.Post (Equal (int myGuessBox.Text)))
-    isLargerButton.Click.Add (fun _ -> ev.Post (Larger (int myGuessBox.Text)))
-    playAgainButton.Click.Add(fun _ -> Async.StartImmediate (init()))
-    // Start
-    Async.StartImmediate (init())
-    window.Show()
+    // isSmallerButton.Click.Add (fun _ -> ev.Post (Smaller (int myGuessBox.Text)))
+    // isEqualButton.Click.Add (fun _ -> ev.Post (Equal (int myGuessBox.Text)))
+    // isLargerButton.Click.Add (fun _ -> ev.Post (Larger (int myGuessBox.Text)))
+    // playAgainButton.Click.Add(fun _ -> Async.StartImmediate (init()))
+    // // Start
+    // Async.StartImmediate (init())
+    // window.Show()
+
+// Provide solution that does not use mutual recursion; async and AsyncQueue
+
+    let playGame () = 
+        let mutable numToGuess = 0
+        let init () = 
+            playAgainButton.Enabled <- false
+            for b in guessButtons 
+                do b.Enabled <- true
+
+            myGuessBox.Text <- "30"
+            ansBox.Text <- ""       
+            numToGuess <- rand.Next(60)
+            
+        let endGame () =         
+            disable guessButtons
+            playAgainButton.Enabled <-true
+            
+        let onIsSmallerGuess _ = 
+            let myGuess = int myGuessBox.Text            
+            if numToGuess < myGuess
+            then 
+                ansBox.Text <- "yes"
+            else             
+                ansBox.Text <- "no"
+        
+        let onIsEqualGuess _ = 
+            let myGuess = int myGuessBox.Text
+            if numToGuess = myGuess
+            then 
+                ansBox.Text <- "You guessed it!"
+                endGame()                
+            else             
+                ansBox.Text <- "no"
+
+        let onIsLargerGuess _ = 
+            let myGuess = int myGuessBox.Text
+            if numToGuess > myGuess
+            then 
+                ansBox.Text <- "Yes"                
+            else             
+                ansBox.Text <- "no"                        
+
+        let (controls:Control list) = 
+            [myGuessBox;ansBox;isSmallerButton;isEqualButton;isLargerButton; playAgainButton]
+            
+        List.iter window.Controls.Add controls
+
+        isSmallerButton.Click.Add onIsSmallerGuess
+        isEqualButton.Click.Add onIsEqualGuess
+        isLargerButton.Click.Add onIsLargerGuess
+        playAgainButton.Click.Add(fun _ -> init())
+        // Start
+        init()
+        window.Show()            
+        ()
+
+    playGame()    
+    
