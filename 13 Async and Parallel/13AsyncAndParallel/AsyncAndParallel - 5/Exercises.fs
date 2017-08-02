@@ -4,6 +4,17 @@ open System.Net
 open System.Threading
 open System.Windows.Forms
 open System.Drawing
+
+#if INTERACTIVE
+#load "QuestTree.fs"
+#load "../Async.fs"
+
+// Open namespace, so other files/modules can be opened
+open Exercises5
+#endif
+open Quest
+open Async
+
 module E = 
     (* 5.
         Make a geography program guessing a country in Europe. The program asks questions to the
@@ -16,12 +27,6 @@ module E =
         kinds: Silly questions where the answer is not used by the program, and direct questions guessing
         a specific country where the answer is used by the program in case it gets answer yes.
     *)
-    type Country = string
-
-    type BinTree<'a> = 
-        |Leaf of Country
-        | Node of BinTree<'a> * 'a * BinTree<'a>
-
     // build the windows    
     let window =
         new Form(Text="Web Source Length", Size=Size(800,300))
@@ -51,20 +56,21 @@ module E =
         2.  
     *)
 
-    let quest = 
-        Node( 
-            Node(
-                Leaf "Cyprus",
-                "Is this country an island?",
-                Leaf "France"
-            ),
-            "Is this country in EU?",
-            Node(
-                Leaf "Turkey",
-                "Is this country a muslim coountry?",
-                Leaf "Russia"
-            )
-        )
+    // let quest = getQuestTree()
+    let q = Async.AsyncEventQueue()
+    q.Post("")
+
+
+    let init () = 
+           let quest = getQuestTree()
+           match quest with
+           | Leaf _ -> failwith "Nothing to guess"
+           | Node (lt, q, rt) -> 
+                // async()
+
+           
+           
+
 
     // Add controls to window
     window.Controls.Add questionBox

@@ -7,11 +7,13 @@ open System.Drawing
 
 #if INTERACTIVE
 #load "FormComponents.fs"
+#load "../Async.fs"
 
 // Open namespace, so other files/modules can be opened
 open Exersices4
 #endif
 open FormComponents
+open Async.Async
 
 module E = 
     (* 3.
@@ -28,29 +30,7 @@ module E =
     *)
 
     // An asynchronous event queue kindly provided by Don Syme
-    type AsyncEventQueue<'T>() =
-        let mutable cont = None
-        let queue = System.Collections.Generic.Queue<'T>()
-        let tryTrigger() =
-            match queue.Count, cont with
-            | _, None -> (); printfn "'tryTrigger': no cont"
-            | 0, _ -> ();  printfn "'tryTrigger': queue empty"
-            | _, Some d ->
-                cont <- None
-                d (queue.Dequeue())
 
-        let tryListen(d) =
-            printfn "trylisten"
-            if cont.IsSome then invalidOp "multicast not allowed"
-            cont <- Some d
-            tryTrigger()
-        member x.Post msg = 
-            printfn "3. continuation is triggered from Post with msg: %A" msg        
-            queue.Enqueue msg; tryTrigger()
-        member x.Receive() =
-            Async.FromContinuations (fun (cont,econt,ccont) ->
-                printfn "1. continuation is added to queue with 'trylisten': %A" cont
-                tryListen cont)
 
     // ----------------- Dialog program------------------
 
