@@ -29,7 +29,7 @@ module E =
     *)
     // build the windows    
     let window =
-        new Form(Text="Web Source Length", Size=Size(800,300))
+        new Form(Text="Web Source Length", Size=Size(800,400))
     let questionBox =
         new TextBox(Location=Point(100,25),Size=Size(600,25), ReadOnly=true)
     
@@ -40,6 +40,9 @@ module E =
         new Button(Location=Point(500,75),MinimumSize=Size(150,50),
             MaximumSize=Size(100,50),Text="No.")
 
+    let playAgainButton = 
+        new Button(Location=Point(325,225),MinimumSize=Size(150,50),
+            MaximumSize=Size(100,50),Text="Play again?")
     let answerBox =
         new TextBox(Location=Point(200,175),Size=Size(400,25), ReadOnly=true)        
     let isLargerButton =
@@ -47,35 +50,49 @@ module E =
             MaximumSize=Size(100,50),Text="Is the number > ")
 
 
-    // build tree from questions, associated with european countries
-    (*
-        From given dataset containg questions build a valid bin tree to play the game
-        What is a valid tree?
-        A tree where each leave is uniquely determined
-        1. Each Question has 2 lists - countries with answer 'yes' and countries with answer 'no'
-        2.  
-    *)
+    type Answer = Yes | No
+    let ev = Async.AsyncEventQueue()
+    
+    let toggle bs state = 
+        for (b:Button) in bs do
+            b.Enabled <- state      
 
-    // let quest = getQuestTree()
-    let q = Async.AsyncEventQueue()
-    q.Post("")
+    let disable bs = toggle bs false
+    let enable bs = toggle bs true      
 
-
+    let rec playGame quest = 
+        match quest with
+            | Leaf c -> 
+                async {
+                    disable [yesButton;noButton]      
+                    enable [playAgainButton]              
+                    answerBox.Text <- sprintf "your country is %s" c
+                }                
+            | Node (lt, q, rt) ->                 
+                async {                    
+                    questionBox.Text <- q
+                    let! resp = ev.Receive()
+                    match resp with
+                    | Yes ->  return! playGame lt
+                    | No -> return! playGame rt
+                }
     let init () = 
-           let quest = getQuestTree()
-           match quest with
-           | Leaf _ -> failwith "Nothing to guess"
-           | Node (lt, q, rt) -> 
-                // async()
+        enable [yesButton;noButton]  
+        disable [playAgainButton]
+        let quest = getQuestTree()
+        playGame quest
 
-           
-           
+    yesButton.Click.Add (fun _ -> ev.Post Yes)
+    noButton.Click.Add (fun _ -> ev.Post No)
+    playAgainButton.Click.Add (fun _ -> Async.StartImmediate(init()))
 
-
-    // Add controls to window
-    window.Controls.Add questionBox
+    // Add controls to window    
     window.Controls.Add yesButton
     window.Controls.Add noButton
+    window.Controls.Add playAgainButton
+    window.Controls.Add questionBox
     window.Controls.Add answerBox
 
+    Async.StartImmediate( init())
     window.Show()        
+    
