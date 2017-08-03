@@ -33,16 +33,11 @@ module E =
 
 
     // ----------------- Dialog program------------------
-
-    // The window part
-
-        
     let disable bs = 
         for (b:Button) in bs do
             b.Enabled <- false        
     
-    let rand = Random()    
-    
+    let rand = Random()        
     
     // The dialogue part from Table 13.7 belongs here
     type Guess = Smaller of int | Equal of int | Larger of int 
@@ -123,8 +118,7 @@ module E =
 // Provide solution that does not use mutual recursion; async and AsyncQueue
 
     let playGame (controls: FormControls) = 
-        let mutable numToGuess = 0
-        
+        let mutable numToGuess = 0        
 
         let init () = 
             controls.PlayAgainButton.Enabled <- false
