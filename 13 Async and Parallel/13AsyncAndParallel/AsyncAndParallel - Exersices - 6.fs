@@ -16,7 +16,7 @@ module E =
         then failwith "Two little elements"
         else Array.fold (^^^) nums.[0] nums.[1..]
 
-    let makeMove matches =
+    let takeMatchesFromHeap matches =
         let totalXorb = xorb matches
         if totalXorb <> 0
         then 
@@ -28,16 +28,15 @@ module E =
             (i, remaining)
 
     let window =
-        new Form(Text="Game of NIM", Size=Size(800,400))
+        new Form(Text="Game of NIM", Size=Size(800 ,400))
     let matchesBox =
-        new TextBox(Location=Point(300,25),Size=Size(200,25), ReadOnly=true)
+        new TextBox(Location=Point(300,25),Size=Size(200, 25), ReadOnly=true)
 
     let matchesBoxes = [|1..10|] |> Array.map (fun i -> 
-        new TextBox(Location=Point(50 * i,125),Size=Size(25,25), ReadOnly=true)
+        new TextBox(Location=Point(50 * i, 125),Size=Size(25, 25), ReadOnly=true)
     )
     let playAgainButton = 
-        new Button(Location=Point(300,300),MinimumSize=Size(200,50),
-            Text="Play again?")
+        new Button(Location=Point(300,300),MinimumSize=Size(200,50), Text="Play again?")
     let infoBox =
         new TextBox(Location=Point(200,25),Size=Size(400,25), ReadOnly=true)    
 
@@ -47,36 +46,37 @@ module E =
     type Player = Human | Computer
     let other = function
     | Human -> Computer
-    |Computer -> Human
+    | Computer -> Human
     
+    // State machine functions
     let rec init () =        
         matches <- [1..10] |> List.map (fun _ -> rand.Next(100)) |> Array.ofList
-        Array.iter2 (fun m (box: TextBox) -> box.Text <-m.ToString() ) matches matchesBoxes
 
+        Array.iter2 (fun m (box: TextBox) -> box.Text <-m.ToString() ) matches matchesBoxes
         playAgainButton.Enabled <- false
         Array.iter (fun (matchesBox: TextBox) -> matchesBox.ResetBackColor()) matchesBoxes
         
         let player = if (rand.Next(2) % 2 = 0) then Human else Computer
         
         match player with
-        |Computer -> 
+        | Computer -> 
             infoBox.Text <- "Computer first:"
             infoBox.BackColor <- Color.Red
-        |Human -> 
+        | Human -> 
             infoBox.Text <- "Human first:"
             infoBox.BackColor <- Color.Blue
 
         async {
-            return! playerMakeMove (player) 
+            return! makeMove player
         }
-    and playerMakeMove (player) = 
+    and makeMove (player) = 
         async {
             let (color, (i, remainingMatches)) = 
                 match player with
                 | Human -> 
-                    (Color.Blue , makeMove (toMatches matchesBoxes))
+                    (Color.Blue , takeMatchesFromHeap (toMatches matchesBoxes))
                 | Computer -> 
-                    (Color.Red , makeMove (toMatches matchesBoxes))
+                    (Color.Red , takeMatchesFromHeap (toMatches matchesBoxes))
             
             matchesBoxes.[i].Text <- remainingMatches.ToString()              
             matchesBoxes.[i].BackColor <- color
@@ -87,16 +87,16 @@ module E =
 
             if Array.exists (fun m -> m > 0)(toMatches matchesBoxes) 
             then 
-                return! playerMakeMove (other player)
+                return! (other player) |> makeMove
             else 
-                playAgain i color
-                // matchesBoxes.[i].BackColor <- color
+                playAgain i color                
         }
-    and playAgain matchesBoxIndex color  = 
-        
-            matchesBoxes.[matchesBoxIndex].BackColor <- color
-            playAgainButton.Enabled <- true
-            
+    and playAgain matchesBoxIndex color  =         
+        matchesBoxes.[matchesBoxIndex].BackColor <- color
+        playAgainButton.Enabled <- true
+
+
+    // Init screen
 
     playAgainButton.Click.Add (fun _ -> Async.StartImmediate(init()))
     Array.iter (fun (matchesBox: TextBox) -> 
