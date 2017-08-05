@@ -9,15 +9,15 @@ let isPrime =
     | n -> testDiv 2 (n-1) n
 
 
-[Int32.MaxValue - 5..Int32.MaxValue] |> List.filter (fun i-> isPrime (202221233 + i))
+// [Int32.MaxValue - 5..Int32.MaxValue] |> List.filter (fun i-> isPrime (202221233 + i))
 
-isPrime 2022231233
+// isPrime 2022231233
 
 let gen = 
     let generator = System.Random()
     generator.Next
 
-gen 10000
+// gen 10000
 
 
 let arr = [|1..550|]
@@ -53,7 +53,7 @@ let rec genTree n range =
 
 let t = genTree 25 3000
 
-exists (fun n -> isPrime n && n>10000) t
+// exists (fun n -> isPrime n && n>10000) t
 
 open System.Threading.Tasks
 let rec parExists p t =
@@ -65,7 +65,7 @@ let rec parExists p t =
         let b2 = Task.Factory.StartNew(fun () -> parExists p tr)
         b1.Result||b2.Result
 
-parExists (fun n -> isPrime n && n>10000) t
+// parExists (fun n -> isPrime n && n>10000) t
 
 let rec parExistsDepth p t n =
     if n=0 then exists p t
@@ -80,7 +80,7 @@ let rec parExistsDepth p t n =
                 parExistsDepth p tr (n-1))
             b1.Result||b2.Result
 
-parExistsDepth (fun n -> isPrime n && n>10000) t 4
+// parExistsDepth (fun n -> isPrime n && n>10000) t 4
 
 // -------------------- Quick sort
 
